@@ -158,7 +158,7 @@ export const useNotificationStore = create<NotificationState>()(
             },
         }),
         {
-            name: 'crop-doctor-notifications',
+            name: 'cropguard-ai-notifications',
             partialize: (state) => ({
                 notifications: state.notifications,
                 dismissedIds: state.dismissedIds

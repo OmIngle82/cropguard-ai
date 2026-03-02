@@ -25,7 +25,7 @@ An offline-first AI-powered crop disease diagnosis application designed for farm
 ```bash
 # Clone the repository
 git clone <repository-url>
-cd crop-doctor
+cd cropguard-ai
 
 # Install dependencies
 npm install
@@ -72,7 +72,7 @@ The app can be installed on mobile devices:
 ### Project Structure
 
 ```
-crop-doctor/
+cropguard-ai/
 ├── public/
 │   ├── models/          # TensorFlow.js model files
 │   └── images/          # Static assets

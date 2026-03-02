@@ -197,7 +197,7 @@ export const useStore = create<AppState>()(
 
             logout: async () => {
                 set({ user: null, isAuthenticated: false, isGuest: false });
-                localStorage.removeItem('crop-doctor-storage');
+                localStorage.removeItem('cropguard-ai-storage');
             },
 
             // Location Data
@@ -317,7 +317,7 @@ export const useStore = create<AppState>()(
             },
         }),
         {
-            name: 'crop-doctor-storage', // name of item in localStorage
+            name: 'cropguard-ai-storage', // name of item in localStorage
             storage: createJSONStorage(() => localStorage),
             partialize: (state) => ({ user: state.user }), // Only persist user data
         }
