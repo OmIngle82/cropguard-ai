@@ -44,8 +44,32 @@ async function fetchNewsFromGoogle(query: string, language: 'en' | 'mr' | 'hi'):
 
     try {
         console.log(`📡 Fetching news for: ${query} (${language})`);
-        const response = await fetch(proxyUrl);
-        const textData = await response.text();
+
+        // Use multiple proxies for maximum reliability (CorsProxy.io -> AllOrigins -> ThingProxy)
+        const proxies = [
+            `https://corsproxy.io/?${encodeURIComponent(rssUrl)}`,
+            `https://api.allorigins.win/raw?url=${encodeURIComponent(rssUrl)}`,
+            `https://thingproxy.freeboard.io/fetch/${rssUrl}`
+        ];
+
+        let textData = '';
+        let success = false;
+
+        for (const proxyUrl of proxies) {
+            try {
+                const response = await fetch(proxyUrl);
+                if (!response.ok) continue;
+                textData = await response.text();
+                if (textData && textData.length > 200) {
+                    success = true;
+                    break;
+                }
+            } catch (proxyErr) {
+                console.warn(`Proxy failed: ${proxyUrl.split('?')[0]}`);
+            }
+        }
+
+        if (!success) throw new Error("All news proxies failed");
 
         // Parse XML
         const parser = new DOMParser();

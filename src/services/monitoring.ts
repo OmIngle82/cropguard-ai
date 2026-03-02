@@ -16,10 +16,15 @@ export const initMonitoring = () => {
         });
 
         // PostHog Init
-        posthog.init(import.meta.env.VITE_POSTHOG_KEY, {
-            api_host: import.meta.env.VITE_POSTHOG_HOST || 'https://app.posthog.com',
-            person_profiles: 'identified_only' // Don't track anonymous users too heavily
-        });
+        const posthogKey = import.meta.env.VITE_POSTHOG_KEY;
+        if (posthogKey) {
+            posthog.init(posthogKey, {
+                api_host: import.meta.env.VITE_POSTHOG_HOST || 'https://app.posthog.com',
+                person_profiles: 'identified_only' // Don't track anonymous users too heavily
+            });
+        } else {
+            console.warn("PostHog initialized without a token. Analytics will be disabled.");
+        }
     } else {
         console.log("Monitoring initialized (Dev Request)");
     }
