@@ -303,38 +303,40 @@ export default function Home() {
                         </div>
 
 
-                        <div className="relative z-10 p-7 md:p-8">
-                            {/* Top row */}
-                            <div className="flex flex-col md:flex-row md:items-start justify-between gap-6 mb-7">
-                                <div className="flex-1">
-                                    <div className="inline-flex items-center gap-2 bg-white/40 backdrop-blur-md border border-white/50 px-3 py-1 rounded-full mb-4 shadow-sm">
-                                        <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                                        <span className={`text-[10px] font-black uppercase tracking-[0.18em] ${currentTheme.primaryText}`}>{t('home.liveAdvisory')}</span>
-                                    </div>
-                                    <div className={`h-[88px] ${currentTheme.primaryText}`}>
-                                        <SmartAdviceCarousel weather={weather} forecast={forecast} />
-                                    </div>
-                                </div>
+                        <div className="relative z-10 p-5 md:p-8">
+                            {/* LIVE ADVISORY label */}
+                            <div className="inline-flex items-center gap-2 bg-white/40 backdrop-blur-md border border-white/50 px-3 py-1 rounded-full mb-3 shadow-sm">
+                                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                                <span className={`text-[10px] font-black uppercase tracking-[0.18em] ${currentTheme.primaryText}`}>{t('home.liveAdvisory')}</span>
+                            </div>
 
-                                {/* Temperature display */}
-                                <div className="flex items-center gap-5 md:flex-col md:items-end md:gap-2">
-                                    <div className="text-right">
-                                        <div className={`flex items-start justify-end ${currentTheme.primaryText}`}>
-                                            <span className="text-[72px] font-black tracking-tighter leading-none tabular-nums drop-shadow-sm">{weather ? weather.temp : '--'}</span>
-                                            <span className="text-3xl font-black mt-3 opacity-80">°C</span>
-                                        </div>
-                                        <span className={`text-sm font-bold ${currentTheme.secondaryText} capitalize block`}>{weather?.condition || t('home.weatherUnavailable')}</span>
-                                        {weather && (
-                                            <span className={`inline-flex items-center gap-1 mt-1 bg-white/50 border border-white/60 rounded-full px-2 py-0.5 text-[10px] font-bold ${currentTheme.primaryText} shadow-sm`}>
-                                                <Droplets size={9} /> {t('home.feelsLike')} {weather.humidity}%
-                                            </span>
-                                        )}
-                                    </div>
+                            {/* Advisory text — grows naturally, never clips */}
+                            <div className={`mb-4 ${currentTheme.primaryText}`}>
+                                <SmartAdviceCarousel weather={weather} forecast={forecast} />
+                            </div>
+
+                            {/* Temperature display — always below advisory */}
+                            <div className="flex items-center justify-between gap-4">
+                                <div className="flex items-start">
+                                    <span className={`text-[64px] md:text-[72px] font-black tracking-tighter leading-none tabular-nums drop-shadow-sm ${currentTheme.primaryText}`}>
+                                        {weather ? weather.temp : '--'}
+                                    </span>
+                                    <span className={`text-2xl font-black mt-2 opacity-80 ${currentTheme.primaryText}`}>°C</span>
+                                </div>
+                                <div className="text-right">
+                                    <span className={`text-sm font-bold ${currentTheme.secondaryText} capitalize block`}>
+                                        {weather?.condition || t('home.weatherUnavailable')}
+                                    </span>
+                                    {weather && (
+                                        <span className={`inline-flex items-center gap-1 mt-1 bg-white/50 border border-white/60 rounded-full px-2 py-0.5 text-[10px] font-bold ${currentTheme.primaryText} shadow-sm`}>
+                                            <Droplets size={9} /> {t('home.feelsLike')} {weather.humidity}%
+                                        </span>
+                                    )}
                                 </div>
                             </div>
 
                             {/* Stats row */}
-                            <div className="grid grid-cols-4 gap-2 pt-8 mt-16 relative z-20">
+                            <div className="grid grid-cols-4 gap-2 pt-5 mt-4 border-t border-white/20">
                                 <WeatherStat label={t('home.wind')} value={weather ? `${weather.wind} km/h` : '--'} textClass={currentTheme.statText} labelClass={currentTheme.statLabel} />
                                 <WeatherStat label={t('home.humidity')} value={weather ? `${weather.humidity}%` : '--'} textClass={currentTheme.statText} labelClass={currentTheme.statLabel} />
                                 <WeatherStat label={t('home.soilMoisture')} value={weather?.soilMoisture ? `${weather.soilMoisture}%` : '--'} textClass={currentTheme.statText} labelClass={currentTheme.statLabel} />

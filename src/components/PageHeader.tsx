@@ -168,7 +168,7 @@ export function HeaderAction({ icon, label, onClick, primary = false, dark = fal
         <button
             onClick={onClick}
             className={clsx(
-                "flex items-center gap-2 px-3.5 py-2 rounded-xl text-[13px] font-bold transition-all active:scale-95 shadow-sm",
+                "flex items-center gap-2 px-2.5 md:px-3.5 py-2 rounded-xl text-[13px] font-bold transition-all active:scale-95 shadow-sm",
                 primary
                     ? "bg-gradient-to-br from-primary-500 to-emerald-600 text-white shadow-primary-500/30 hover:shadow-primary-500/50"
                     : dark
@@ -177,7 +177,7 @@ export function HeaderAction({ icon, label, onClick, primary = false, dark = fal
             )}
         >
             <span className={primary ? "text-white" : dark ? "text-emerald-400" : "text-primary-600"}>{icon}</span>
-            {label}
+            <span className="hidden md:inline">{label}</span>
         </button>
     );
 }

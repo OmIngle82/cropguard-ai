@@ -141,12 +141,32 @@ export default function KisanChat({ onClose, context, lang = 'en' }: KisanChatPr
     };
 
     const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+    const [keyboardOffset, setKeyboardOffset] = useState(0);
 
     useEffect(() => {
         const handleResize = () => setIsMobile(window.innerWidth < 768);
         window.addEventListener('resize', handleResize);
         return () => window.removeEventListener('resize', handleResize);
     }, []);
+
+    // Keyboard-aware input: detect keyboard height via visualViewport
+    useEffect(() => {
+        if (!isMobile) return;
+        const viewport = window.visualViewport;
+        if (!viewport) return;
+
+        const handleViewportResize = () => {
+            const keyboardHeight = window.innerHeight - viewport.height - viewport.offsetTop;
+            setKeyboardOffset(Math.max(0, keyboardHeight));
+        };
+
+        viewport.addEventListener('resize', handleViewportResize);
+        viewport.addEventListener('scroll', handleViewportResize);
+        return () => {
+            viewport.removeEventListener('resize', handleViewportResize);
+            viewport.removeEventListener('scroll', handleViewportResize);
+        };
+    }, [isMobile]);
 
     const showQuickPrompts = messages.length <= 1;
 
@@ -158,13 +178,13 @@ export default function KisanChat({ onClose, context, lang = 'en' }: KisanChatPr
             scale: 1,
             transition: {
                 type: "spring",
-                stiffness: isMobile ? 350 : 400,
-                damping: isMobile ? 35 : 30,
-                mass: 0.8
+                stiffness: isMobile ? 280 : 360,
+                damping: isMobile ? 28 : 30,
+                mass: 0.7
             }
         },
         exit: isMobile
-            ? { y: '100%', opacity: 1, transition: { duration: 0.3, ease: "easeIn" } }
+            ? { y: '100%', opacity: 1, transition: { duration: 0.25, ease: [0.4, 0, 1, 1] } }
             : { opacity: 0, scale: 0.95, y: 20, transition: { duration: 0.2 } }
     };
 
@@ -370,7 +390,14 @@ export default function KisanChat({ onClose, context, lang = 'en' }: KisanChatPr
                 </div>
 
                 {/* ── Input Area ───────────────────────────────────────────── */}
-                <div className="bg-white border-t border-emerald-100 shadow-[0_-15px_40px_rgba(16,185,129,0.05)] px-4 py-4 pb-[calc(1.25rem+env(safe-area-inset-bottom))] flex-shrink-0 z-20">
+                <div
+                    className="bg-white border-t border-emerald-100 shadow-[0_-15px_40px_rgba(16,185,129,0.05)] px-4 py-4 flex-shrink-0 z-20 transition-all duration-150"
+                    style={{
+                        paddingBottom: isMobile
+                            ? `calc(1rem + ${keyboardOffset}px + env(safe-area-inset-bottom))`
+                            : '1.25rem'
+                    }}
+                >
                     <div className="flex items-center gap-2 bg-white rounded-2xl p-1.5 border border-gray-100 shadow-[inset_0_2px_4px_rgba(0,0,0,0.02)] focus-within:border-emerald-300 focus-within:ring-4 focus-within:ring-emerald-50 transition-all">
                         <input
                             ref={inputRef}
