@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react';
 import { Outlet, NavLink, useNavigate } from 'react-router-dom';
 import { Home, History, Settings, Sprout, Camera, Bot, FlaskConical, Bell, ChevronRight } from 'lucide-react';
-import posthog from 'posthog-js';
 import clsx from 'clsx';
 import { useStore } from '../store/useStore';
 import { useNotificationStore } from '../services/NotificationService';
@@ -19,16 +18,9 @@ export default function Layout() {
     const displayName = profile ? `${profile.firstName} ${profile.surname}`.trim() : 'Guest';
 
     useEffect(() => {
-        if (displayName) {
-            posthog.identify(displayName, {
-                name: displayName,
-                farmSize: safeProfile.farmSize,
-                language: safeProfile.language
-            });
-        }
         refreshLocation();
         refreshMarketData(false);
-    }, [displayName, safeProfile.farmSize, safeProfile.language, refreshLocation, refreshMarketData]);
+    }, [refreshLocation, refreshMarketData]);
 
     const { t, lang } = useT();
     const unread = getUnreadCount();

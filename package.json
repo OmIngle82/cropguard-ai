@@ -26,7 +26,6 @@
     "jspdf": "^4.2.0",
     "katex": "^0.16.28",
     "lucide-react": "^0.563.0",
-    "posthog-js": "^1.347.2",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "react-hot-toast": "^2.6.0",

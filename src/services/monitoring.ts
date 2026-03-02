@@ -1,9 +1,8 @@
 import * as Sentry from "@sentry/react";
-import posthog from 'posthog-js';
 
 export const initMonitoring = () => {
     if (import.meta.env.PROD) {
-        // Sentry Init
+        // Sentry Init — Error tracking & session replay
         Sentry.init({
             dsn: import.meta.env.VITE_SENTRY_DSN,
             integrations: [
@@ -14,19 +13,6 @@ export const initMonitoring = () => {
             replaysSessionSampleRate: 0.1,
             replaysOnErrorSampleRate: 1.0,
         });
-
-        // PostHog Init
-        const posthogKey = import.meta.env.VITE_POSTHOG_KEY;
-        if (posthogKey) {
-            posthog.init(posthogKey, {
-                api_host: import.meta.env.VITE_POSTHOG_HOST || 'https://app.posthog.com',
-                person_profiles: 'identified_only' // Don't track anonymous users too heavily
-            });
-        } else {
-            console.warn("PostHog initialized without a token. Analytics will be disabled.");
-        }
-    } else {
-        console.log("Monitoring initialized (Dev Request)");
     }
 };
 
@@ -44,6 +30,5 @@ export const logEvent = (name: string, data?: Record<string, any>) => {
             level: "info",
             extra: data
         });
-        posthog.capture(name, data);
     }
 };
