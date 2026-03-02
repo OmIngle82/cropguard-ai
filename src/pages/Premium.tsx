@@ -72,7 +72,7 @@ export default function Premium() {
     return (
         <div className="min-h-screen bg-surface pb-24 md:pb-12 font-sans overflow-x-hidden">
             <PageHeader
-                title="Crop Doctor"
+                title="CropGuard AI"
                 badge="Pro"
                 showBack={false}
             />
@@ -123,7 +123,7 @@ export default function Premium() {
                         </motion.span>
 
                         <h2 className="text-4xl md:text-6xl font-black text-white mb-6 leading-tight tracking-tight">
-                            Crop Doctor <span className="relative">
+                            CropGuard AI <span className="relative">
                                 <span className="bg-gradient-to-r from-amber-200 via-amber-400 to-amber-200 bg-clip-text text-transparent animate-shimmer bg-[length:200%_auto]">Pro</span>
                                 <span className="absolute -bottom-2 left-0 w-full h-1.5 bg-amber-400/30 blur-sm rounded-full" />
                             </span>

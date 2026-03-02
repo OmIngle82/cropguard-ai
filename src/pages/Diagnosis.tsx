@@ -552,7 +552,7 @@ export default function Diagnosis() {
         const diseaseName = lang === 'mr' ? diseaseDetails.localName : diseaseDetails.name;
         const severity = diseaseDetails.severity;
 
-        let text = `🌾 *Crop Doctor Report* 🌾\n\n`;
+        let text = `🌾 *CropGuard AI Report* 🌾\n\n`;
         text += `*Crop:* ${cropName}\n`;
         text += `*Diagnosis:* ${diseaseName} (${severity})\n`;
 
@@ -561,12 +561,12 @@ export default function Diagnosis() {
             text += `*Recommended:* ${rec.brand || rec.name} (${rec.dosage})\n`;
         }
 
-        text += `\nDiagnosed via Crop Doctor App 📱`;
+        text += `\nDiagnosed via CropGuard AI App 📱`;
 
         if (navigator.share) {
             try {
                 await navigator.share({
-                    title: 'Crop Doctor Diagnosis',
+                    title: 'CropGuard AI Diagnosis',
                     text: text,
                 });
             } catch (err) {

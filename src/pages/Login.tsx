@@ -196,7 +196,7 @@ export default function Login() {
                                 transition={{ delay: 0.3 }}
                                 className="text-2xl md:text-5xl font-display font-black md:mb-3 tracking-tight"
                             >
-                                Crop Doctor
+                                CropGuard AI
                             </motion.h1>
                             <motion.p
                                 initial={{ opacity: 0, x: -20 }}
@@ -433,7 +433,7 @@ export default function Login() {
                 transition={{ delay: 1 }}
                 className="absolute bottom-6 text-center text-gray-500 text-[11px] font-black uppercase tracking-[0.3em]"
             >
-                © 2026 Crop Doctor AI • Made for Vidarbha
+                © 2026 CropGuard AI • Made for Vidarbha
             </motion.p>
         </div>
     );

@@ -15,7 +15,7 @@ export default function DiagnosisHeader({ lang, toggleLang, isSpeaking, playResu
             <div>
                 <h1 className="text-2xl font-display font-black text-gray-900 tracking-tight">Diagnosis</h1>
                 <div className="flex items-center gap-2">
-                    <p className="text-xs text-gray-500 font-bold uppercase tracking-wider">AI Crop Doctor</p>
+                    <p className="text-xs text-gray-500 font-bold uppercase tracking-wider">AI CropGuard AI</p>
                     {/* Network Status Badge */}
                     <div className={`flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold border ${isOnline ? 'bg-green-100 text-green-700 border-green-200' : 'bg-orange-100 text-orange-700 border-orange-200'}`}>
                         {isOnline ? <Wifi size={10} /> : <WifiOff size={10} />}

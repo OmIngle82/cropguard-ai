@@ -11,9 +11,9 @@ export default defineConfig({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'masked-icon.svg'],
       manifest: {
-        name: 'Vidarbha Crop Doctor AI',
-        short_name: 'Crop Doctor',
-        description: 'Advanced AI Diagnosis for Cotton & Soybean Crops',
+        name: 'CropGuard AI — Smart Farming Assistant',
+        short_name: 'CropGuard AI',
+        description: 'Advanced AI Diagnosis for Cotton & Soybean Crops — Powered by CropGuard AI',
         theme_color: '#10b981',
         background_color: '#f8fafc',
         display: 'standalone',

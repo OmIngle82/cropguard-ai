@@ -2,7 +2,7 @@ import { useStore } from '../store/useStore';
 import { translations, type TranslationKey, type Locale } from './translations';
 
 /**
- * useT — Lightweight i18n hook for Crop Doctor.
+ * useT — Lightweight i18n hook for CropGuard AI.
  *
  * Reads `user.language` from the Zustand store (reactive).
  * When the user changes language in Settings, all components

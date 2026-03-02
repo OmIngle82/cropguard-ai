@@ -619,7 +619,7 @@ export default function Settings() {
                 </section>
 
                 <div className="text-center text-[10px] text-gray-300 font-black uppercase tracking-[0.2em] pb-4">
-                    Crop Doctor v1.0.0 · AI-Powered
+                    CropGuard AI v1.0.0 · AI-Powered
                 </div>
             </div>
         </div>

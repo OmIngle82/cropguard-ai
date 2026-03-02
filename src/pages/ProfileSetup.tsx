@@ -583,7 +583,7 @@ function Step6Project({ formData, updateField }: any) {
                     value={formData.productName}
                     onChange={(e) => updateField('productName', e.target.value)}
                     className="w-full px-3 md:px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm md:text-base"
-                    placeholder="e.g., Crop Doctor AI"
+                    placeholder="e.g., CropGuard AI"
                 />
             </div>
 

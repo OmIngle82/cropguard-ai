@@ -1,5 +1,5 @@
 /**
- * Crop Doctor — Translation Dictionary
+ * CropGuard AI — Translation Dictionary
  * Industry-grade Marathi translations based on usage in:
  * - Agrowon newspaper (Maharashtra's leading agri paper)
  * - ICAR-NRRI Maharashtra terminology
@@ -150,7 +150,7 @@ const en: Translations = {
     'home.nocropsHint': 'Run your first diagnosis below',
     'home.scanNewCrop': 'Scan New Crop',
     'home.scanSubtitle': 'AI-powered disease detection',
-    'home.upgradeBanner': 'Upgrade to Crop Doctor Pro',
+    'home.upgradeBanner': 'Upgrade to CropGuard AI Pro',
     'home.upgradeSub': 'Unlimited consultations & verified reports.',
     'home.loadingInsights': 'Loading insights...',
 
@@ -362,7 +362,7 @@ const mr: Translations = {
     'home.nocropsHint': 'खाली पहिले निदान करा',
     'home.scanNewCrop': 'नवीन पीक स्कॅन करा',
     'home.scanSubtitle': 'AI-आधारित रोग ओळख',
-    'home.upgradeBanner': 'क्रॉप डॉक्टर प्रो वर अपग्रेड करा',
+    'home.upgradeBanner': 'क्रॉपगार्ड AI प्रो वर अपग्रेड करा',
     'home.upgradeSub': 'अमर्यादित सल्लामसलत आणि सत्यापित अहवाल.',
     'home.loadingInsights': 'माहिती लोड होत आहे...',
 

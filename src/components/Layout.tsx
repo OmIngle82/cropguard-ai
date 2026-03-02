@@ -63,7 +63,7 @@ export default function Layout() {
                             <Sprout size={20} className="text-white drop-shadow-sm" />
                         </div>
                         <div>
-                            <h1 className="text-[17px] font-black text-slate-800 tracking-tight leading-none drop-shadow-sm">Crop Doctor</h1>
+                            <h1 className="text-[17px] font-black text-slate-800 tracking-tight leading-none drop-shadow-sm">CropGuard AI</h1>
                             <p className="text-[10px] text-emerald-600 font-bold uppercase tracking-widest mt-1">{t('nav.aiAssistant')}</p>
                         </div>
                     </div>

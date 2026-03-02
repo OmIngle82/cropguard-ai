@@ -1,4 +1,4 @@
-# Crop Doctor 🌾
+# CropGuard AI 🌿🛡️✨
 
 An offline-first AI-powered crop disease diagnosis application designed for farmers in rural Vidarbha, Maharashtra, India.
 
