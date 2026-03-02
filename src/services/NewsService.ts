@@ -42,31 +42,19 @@ async function fetchNewsFromGoogle(query: string, language: 'en' | 'mr' | 'hi'):
     try {
         console.log(`📡 Fetching news for: ${query} (${language})`);
 
-        // Use multiple proxies for maximum reliability (CorsProxy.io -> AllOrigins -> ThingProxy)
-        const proxies = [
-            `https://corsproxy.io/?${encodeURIComponent(rssUrl)}`,
-            `https://api.allorigins.win/raw?url=${encodeURIComponent(rssUrl)}`,
-            `https://thingproxy.freeboard.io/fetch/${rssUrl}`
-        ];
+        // Use our own Vercel serverless function to proxy the request server-side.
+        // This permanently eliminates all CORS issues — no more public proxy dependency.
+        const proxyUrl = `/api/news?url=${encodeURIComponent(rssUrl)}`;
+        const response = await fetch(proxyUrl);
 
-        let textData = '';
-        let success = false;
-
-        for (const proxyUrl of proxies) {
-            try {
-                const response = await fetch(proxyUrl);
-                if (!response.ok) continue;
-                textData = await response.text();
-                if (textData && textData.length > 200) {
-                    success = true;
-                    break;
-                }
-            } catch (proxyErr) {
-                console.warn(`Proxy failed: ${proxyUrl.split('?')[0]}`);
-            }
+        if (!response.ok) {
+            throw new Error(`News proxy returned status: ${response.status}`);
         }
 
-        if (!success) throw new Error("All news proxies failed");
+        const textData = await response.text();
+        if (!textData || textData.length < 100) {
+            throw new Error("News proxy returned empty response");
+        }
 
         // Parse XML
         const parser = new DOMParser();
