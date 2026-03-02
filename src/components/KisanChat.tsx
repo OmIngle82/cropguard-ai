@@ -141,7 +141,7 @@ export default function KisanChat({ onClose, context, lang = 'en' }: KisanChatPr
     };
 
     const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
-    const [keyboardOffset, setKeyboardOffset] = useState(0);
+    const [keyboardHeight, setKeyboardHeight] = useState(0);
 
     useEffect(() => {
         const handleResize = () => setIsMobile(window.innerWidth < 768);
@@ -149,24 +149,23 @@ export default function KisanChat({ onClose, context, lang = 'en' }: KisanChatPr
         return () => window.removeEventListener('resize', handleResize);
     }, []);
 
-    // Keyboard-aware input: detect keyboard height via visualViewport
+    // Track keyboard height via visualViewport API (avoids entire UI being pushed)
     useEffect(() => {
-        if (!isMobile) return;
-        const viewport = window.visualViewport;
-        if (!viewport) return;
+        const vv = window.visualViewport;
+        if (!vv) return;
 
-        const handleViewportResize = () => {
-            const keyboardHeight = window.innerHeight - viewport.height - viewport.offsetTop;
-            setKeyboardOffset(Math.max(0, keyboardHeight));
+        const handler = () => {
+            const kbHeight = window.innerHeight - vv.height - vv.offsetTop;
+            setKeyboardHeight(Math.max(0, kbHeight));
         };
 
-        viewport.addEventListener('resize', handleViewportResize);
-        viewport.addEventListener('scroll', handleViewportResize);
+        vv.addEventListener('resize', handler);
+        vv.addEventListener('scroll', handler);
         return () => {
-            viewport.removeEventListener('resize', handleViewportResize);
-            viewport.removeEventListener('scroll', handleViewportResize);
+            vv.removeEventListener('resize', handler);
+            vv.removeEventListener('scroll', handler);
         };
-    }, [isMobile]);
+    }, []);
 
     const showQuickPrompts = messages.length <= 1;
 
@@ -179,13 +178,13 @@ export default function KisanChat({ onClose, context, lang = 'en' }: KisanChatPr
             transition: {
                 type: "spring",
                 stiffness: isMobile ? 280 : 360,
-                damping: isMobile ? 28 : 30,
+                damping: isMobile ? 26 : 28,
                 mass: 0.7
             }
         },
         exit: isMobile
             ? { y: '100%', opacity: 1, transition: { duration: 0.25, ease: [0.4, 0, 1, 1] } }
-            : { opacity: 0, scale: 0.95, y: 20, transition: { duration: 0.2 } }
+            : { opacity: 0, scale: 0.95, y: 20, transition: { duration: 0.18 } }
     };
 
     return (
@@ -393,9 +392,9 @@ export default function KisanChat({ onClose, context, lang = 'en' }: KisanChatPr
                 <div
                     className="bg-white border-t border-emerald-100 shadow-[0_-15px_40px_rgba(16,185,129,0.05)] px-4 py-4 flex-shrink-0 z-20 transition-all duration-150"
                     style={{
-                        paddingBottom: isMobile
-                            ? `calc(1rem + ${keyboardOffset}px + env(safe-area-inset-bottom))`
-                            : '1.25rem'
+                        paddingBottom: keyboardHeight > 0
+                            ? `calc(${keyboardHeight}px + 1rem)`
+                            : 'calc(1.25rem + env(safe-area-inset-bottom))'
                     }}
                 >
                     <div className="flex items-center gap-2 bg-white rounded-2xl p-1.5 border border-gray-100 shadow-[inset_0_2px_4px_rgba(0,0,0,0.02)] focus-within:border-emerald-300 focus-within:ring-4 focus-within:ring-emerald-50 transition-all">
