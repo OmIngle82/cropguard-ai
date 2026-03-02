@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { createPortal } from 'react-dom';
-import { CloudSun, Droplets, ArrowRight, AlertCircle, Sprout, X, Crown, MapPin, RefreshCw, Bell, Sparkles } from 'lucide-react';
+import { CloudSun, Droplets, ArrowRight, AlertCircle, Sprout, X, Crown, MapPin, RefreshCw, Bell, Sparkles, Flame } from 'lucide-react';
 import { getHistory } from '../services/db';
 import { getLatestNews, type NewsItem } from '../services/NewsService';
 import { useNavigate } from 'react-router-dom';
@@ -618,49 +618,72 @@ function PredictiveAlert({ weather, forecast }: { weather: any, forecast: any[] 
         alert = {
             title: 'Spray Advisory: Rain Incoming',
             message: `Rain expected in next 24h (${rainForecast.precipProb}% chance). Delay spraying.`,
-            color: 'bg-blue-600',
-            icon: <CloudSun className="text-white" size={24} />
+            gradient: 'from-blue-600 to-indigo-700',
+            accent: 'bg-blue-400/20',
+            icon: <CloudSun className="text-white" size={20} />
         };
     }
     else if (weather.humidity > 80 && weather.temp > 24) {
         alert = {
             title: 'High Fungal Risk Alert',
             message: 'High humidity & warm temps favor Fungal Blight. Monitor crops closely.',
-            color: 'bg-red-500',
-            icon: <AlertCircle className="text-white" size={24} />
+            gradient: 'from-red-600 to-rose-700',
+            accent: 'bg-red-400/20',
+            icon: <AlertCircle className="text-white" size={20} />
         };
     } else if (weather.code !== undefined && weather.code < 700) {
         alert = {
             title: 'Spray Advisory: Rain',
             message: 'Rainfall or bad weather active. Avoid spraying pesticides.',
-            color: 'bg-blue-500',
-            icon: <CloudSun className="text-white" size={24} />
+            gradient: 'from-blue-500 to-cyan-600',
+            accent: 'bg-blue-400/20',
+            icon: <CloudSun className="text-white" size={20} />
         };
     } else if (weather.temp > 35) {
         alert = {
             title: 'Heat Stress Warning',
             message: 'Extreme heat detected. Ensure adequate irrigation for young crops.',
-            color: 'bg-orange-500',
-            icon: <CloudSun className="text-white" size={24} />
+            gradient: 'from-orange-500 to-amber-600',
+            accent: 'bg-orange-400/20',
+            icon: <Flame className="text-white" size={20} />
         };
     }
 
     if (!alert) return null;
 
     return (
-        <div className={`${alert.color} rounded-2xl p-4 text-white shadow-lg flex items-start gap-4 mb-8 animate-pulse`}>
-            <div className="bg-white/20 p-2 rounded-full">
-                {alert.icon}
+        <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="relative overflow-hidden rounded-[2rem] p-5 mb-8 border-[2px] border-white/40 shadow-[0_15px_35px_rgba(0,0,0,0.1)] group transition-all duration-300 hover:shadow-[0_20px_45px_rgba(0,0,0,0.15)] hover:-translate-y-0.5"
+        >
+            {/* 3D Glassmorphic Background */}
+            <div className={`absolute inset-0 bg-gradient-to-br ${alert.gradient} opacity-90 backdrop-blur-2xl`} />
+
+            {/* 3D Lighting Accents */}
+            <div className="absolute inset-0 rounded-[2rem] overflow-hidden pointer-events-none">
+                <div className={`absolute -top-10 -right-10 w-40 h-40 ${alert.accent} rounded-full blur-[30px]`} />
+                <div className={`absolute -bottom-10 -left-10 w-40 h-40 ${alert.accent} rounded-full blur-[30px]`} />
+                {/* Glossy overlay */}
+                <div className="absolute inset-0 bg-gradient-to-tr from-white/10 to-transparent" />
             </div>
-            <div>
-                <h4 className="font-bold text-lg leading-tight">{alert.title}</h4>
-                <p className="text-white/90 text-sm font-medium mt-1">{alert.message}</p>
-                <div className="mt-2 inline-flex items-center gap-1 bg-black/20 px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider">
-                    <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse"></span>
-                    AI Forecast
+
+            <div className="relative z-10 flex items-start gap-4">
+                <div className="w-12 h-12 rounded-2xl bg-white/20 backdrop-blur-xl flex items-center justify-center shrink-0 border border-white/30 shadow-lg shadow-black/5 group-hover:scale-110 transition-transform duration-300">
+                    {alert.icon}
+                </div>
+                <div className="flex-1">
+                    <div className="flex items-center justify-between gap-2 mb-1">
+                        <h4 className="font-black text-white text-lg tracking-tight drop-shadow-sm leading-none">{alert.title}</h4>
+                        <div className="inline-flex items-center gap-1.5 bg-black/20 backdrop-blur-md border border-white/10 px-2.5 py-1 rounded-full text-[9px] font-black text-white uppercase tracking-[0.15em] shadow-sm shrink-0">
+                            <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
+                            AI Forecast
+                        </div>
+                    </div>
+                    <p className="text-white/80 text-sm font-bold leading-relaxed">{alert.message}</p>
                 </div>
             </div>
-        </div>
+        </motion.div>
     );
 }
 
