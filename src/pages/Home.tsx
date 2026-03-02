@@ -167,9 +167,9 @@ export default function Home() {
     const { t } = useT();
 
     return (
-        <div className="p-6 md:p-10 space-y-8 pb-32 md:pb-10 max-w-7xl mx-auto">
+        <div className="px-3 pt-3 md:px-10 md:pt-6 space-y-5 pb-32 md:pb-10 max-w-7xl mx-auto">
             {/* ── Home Sticky Header ── */}
-            <header className="sticky md:static top-3 md:top-0 md:mt-8 z-40 -mx-3 md:mx-0 px-3 md:px-0 mb-8 transition-all duration-300 group">
+            <header className="sticky md:static top-2 md:top-0 md:mt-8 z-40 -mx-3 md:mx-0 mb-5 transition-all duration-300 group">
                 <div className="relative md:max-w-[98%] mx-auto hover:-translate-y-0.5 transition-transform duration-300">
                     {/* 3D Glassmorphic Base */}
                     <div className="absolute inset-0 bg-gradient-to-br from-white/95 to-white/70 backdrop-blur-2xl rounded-[1.5rem] border-[2px] border-white shadow-[0_15px_35px_rgba(0,0,0,0.05)] group-hover:shadow-[0_20px_40px_rgba(0,0,0,0.08)] transition-shadow duration-300" />
@@ -310,32 +310,30 @@ export default function Home() {
                                 <span className={`text-[10px] font-black uppercase tracking-[0.18em] ${currentTheme.primaryText}`}>{t('home.liveAdvisory')}</span>
                             </div>
 
-                            {/* Mobile layout: stacked vertically. Desktop: side by side */}
-                            <div className="flex flex-col md:flex-row md:items-start justify-between gap-3 md:gap-6">
-                                {/* Advisory Text — flex, min-height so it won't clip, no fixed height */}
-                                <div className={`flex-1 min-h-[68px] ${currentTheme.primaryText}`}>
+                            {/* Advisory + Temperature in a stable row on mobile */}
+                            <div className="flex items-start justify-between gap-3">
+                                {/* Advisory text — FIXED height so card never resizes as text rotates */}
+                                <div className={`flex-1 h-[125px] overflow-hidden ${currentTheme.primaryText}`}>
                                     <SmartAdviceCarousel weather={weather} forecast={forecast} />
                                 </div>
 
-                                {/* Temperature display — sits cleanly below on mobile */}
-                                <div className="flex items-center gap-4 md:flex-col md:items-end md:gap-1">
-                                    <div className="text-right">
-                                        <div className={`flex items-start justify-end ${currentTheme.primaryText}`}>
-                                            <span className="text-[64px] md:text-[72px] font-black tracking-tighter leading-none tabular-nums drop-shadow-sm">{weather ? weather.temp : '--'}</span>
-                                            <span className="text-2xl md:text-3xl font-black mt-2 md:mt-3 opacity-80">°C</span>
-                                        </div>
-                                        <span className={`text-sm font-bold ${currentTheme.secondaryText} capitalize block`}>{weather?.condition || t('home.weatherUnavailable')}</span>
-                                        {weather && (
-                                            <span className={`inline-flex items-center gap-1 mt-1 bg-white/50 border border-white/60 rounded-full px-2 py-0.5 text-[10px] font-bold ${currentTheme.primaryText} shadow-sm`}>
-                                                <Droplets size={9} /> {t('home.feelsLike')} {weather.humidity}%
-                                            </span>
-                                        )}
+                                {/* Temperature display — always visible, right side */}
+                                <div className="flex-shrink-0 text-right">
+                                    <div className={`flex items-start justify-end ${currentTheme.primaryText}`}>
+                                        <span className="text-[56px] md:text-[72px] font-black tracking-tighter leading-none tabular-nums drop-shadow-sm">{weather ? weather.temp : '--'}</span>
+                                        <span className="text-xl md:text-3xl font-black mt-1.5 md:mt-3 opacity-80">°C</span>
                                     </div>
+                                    <span className={`text-sm font-bold ${currentTheme.secondaryText} capitalize block`}>{weather?.condition || t('home.weatherUnavailable')}</span>
+                                    {weather && (
+                                        <span className={`inline-flex items-center gap-1 mt-1 bg-white/50 border border-white/60 rounded-full px-2 py-0.5 text-[10px] font-bold ${currentTheme.primaryText} shadow-sm`}>
+                                            <Droplets size={9} /> {t('home.feelsLike')} {weather.humidity}%
+                                        </span>
+                                    )}
                                 </div>
                             </div>
 
                             {/* Stats row */}
-                            <div className="grid grid-cols-4 gap-2 pt-5 mt-4 relative z-20">
+                            <div className="grid grid-cols-4 gap-2 pt-4 mt-4 relative z-20">
                                 <WeatherStat label={t('home.wind')} value={weather ? `${weather.wind} km/h` : '--'} textClass={currentTheme.statText} labelClass={currentTheme.statLabel} />
                                 <WeatherStat label={t('home.humidity')} value={weather ? `${weather.humidity}%` : '--'} textClass={currentTheme.statText} labelClass={currentTheme.statLabel} />
                                 <WeatherStat label={t('home.soilMoisture')} value={weather?.soilMoisture ? `${weather.soilMoisture}%` : '--'} textClass={currentTheme.statText} labelClass={currentTheme.statLabel} />
@@ -826,18 +824,29 @@ function SmartAdviceCarousel({ weather, forecast }: { weather: any, forecast: an
     const item = adviceList[index] || adviceList[0];
 
     return (
-        <div className="transition-all duration-500 ease-in-out transform">
-            <h2 className="text-3xl md:text-3xl font-black opacity-95 leading-tight">
-                {item.title}
-            </h2>
-            <p className="text-white/80 font-medium text-lg mt-1">
-                {item.desc}
-            </p>
-            <div className="flex gap-1 mt-3">
-                {adviceList.map((_, i) => (
-                    <div key={i} className={`h-1 rounded-full transition-all ${i === index ? 'w-6 bg-white' : 'w-2 bg-white/30'}`} />
-                ))}
-            </div>
+        <div className="relative h-full overflow-hidden">
+            <AnimatePresence mode="wait" initial={false}>
+                <motion.div
+                    key={index}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    transition={{ duration: 0.35, ease: [0.25, 0.1, 0.25, 1] }}
+                    className="absolute inset-0 will-change-transform"
+                >
+                    <h2 className="text-2xl md:text-3xl font-black opacity-95 leading-tight">
+                        {item.title}
+                    </h2>
+                    <p className="text-white/80 font-medium text-base md:text-lg mt-1 leading-snug">
+                        {item.desc}
+                    </p>
+                    <div className="flex gap-1 mt-3">
+                        {adviceList.map((_, i) => (
+                            <div key={i} className={`h-1 rounded-full transition-[width,opacity] duration-300 ease-out ${i === index ? 'w-6 bg-white' : 'w-2 bg-white/30'}`} />
+                        ))}
+                    </div>
+                </motion.div>
+            </AnimatePresence>
         </div>
     );
 }

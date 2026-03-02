@@ -212,35 +212,42 @@ export default function Schemes() {
                 </motion.div>
 
                 {/* ── Schemes List ────────────────────────────────────────── */}
-                <div className="grid gap-6">
-                    <AnimatePresence mode="popLayout">
-                        {filteredSchemes.map((scheme: any) => (
+                <AnimatePresence mode="wait" initial={false}>
+                    <motion.div
+                        key={`${activeTab}-${selectedCategory}`}
+                        initial={{ opacity: 0, y: 8 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -8 }}
+                        transition={{ duration: 0.25, ease: [0.25, 0.1, 0.25, 1] }}
+                        className="grid gap-6"
+                    >
+                        {filteredSchemes.map((scheme: any, i: number) => (
                             <motion.div
                                 key={scheme.id}
-                                variants={itemVariants}
-                                layout
-                                initial="hidden"
-                                animate="visible"
-                                exit={{ opacity: 0, scale: 0.95 }}
+                                initial={{ opacity: 0, y: 16 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ duration: 0.3, delay: i * 0.04, ease: [0.25, 0.1, 0.25, 1] }}
                             >
                                 <SchemeCard scheme={scheme} />
                             </motion.div>
                         ))}
-                    </AnimatePresence>
 
-                    {filteredSchemes.length === 0 && (
-                        <motion.div
-                            variants={itemVariants}
-                            className="text-center py-24 bg-white/50 backdrop-blur-md rounded-[3rem] border-2 border-dashed border-slate-200"
-                        >
-                            <div className="w-24 h-24 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-6 shadow-inner">
-                                <Search size={40} className="text-slate-200" />
-                            </div>
-                            <h3 className="text-2xl font-black text-slate-800 tracking-tight">{t('scheme.noSchemes')}</h3>
-                            <p className="text-slate-400 font-bold mt-2 text-sm uppercase tracking-wide">{t('common.filter')}</p>
-                        </motion.div>
-                    )}
-                </div>
+                        {filteredSchemes.length === 0 && (
+                            <motion.div
+                                initial={{ opacity: 0, scale: 0.97 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                transition={{ duration: 0.3 }}
+                                className="text-center py-24 bg-white/50 backdrop-blur-md rounded-[3rem] border-2 border-dashed border-slate-200"
+                            >
+                                <div className="w-24 h-24 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-6 shadow-inner">
+                                    <Search size={40} className="text-slate-200" />
+                                </div>
+                                <h3 className="text-2xl font-black text-slate-800 tracking-tight">{t('scheme.noSchemes')}</h3>
+                                <p className="text-slate-400 font-bold mt-2 text-sm uppercase tracking-wide">{t('common.filter')}</p>
+                            </motion.div>
+                        )}
+                    </motion.div>
+                </AnimatePresence>
             </motion.div>
         </div>
     );

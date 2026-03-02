@@ -17,7 +17,37 @@
     font-family: 'Noto Sans Devanagari', 'Plus Jakarta Sans', sans-serif !important;
   }
 
-  /* Custom Premium Scrollbar */
+  /* ── Mobile Performance: Eliminate 300ms tap delay ── */
+  button,
+  a,
+  [role="button"] {
+    touch-action: manipulation;
+  }
+
+  /* ── GPU compositing — prevents paint on animated elements ── */
+  button,
+  a,
+  [class*="transition"],
+  [class*="animate"] {
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+  }
+
+  /* ── iOS momentum scrolling on all scroll containers ── */
+  [class*="overflow-y-auto"],
+  [class*="overflow-y-scroll"],
+  main,
+  section {
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* ── Prevent scroll chaining (rubberband at edges) ── */
+  .overflow-y-auto,
+  .overflow-y-scroll {
+    overscroll-behavior: contain;
+  }
+
+  /* ── Custom Premium Scrollbar ── */
   ::-webkit-scrollbar {
     width: 5px;
     height: 5px;
@@ -42,11 +72,23 @@
     scrollbar-color: #10b98130 transparent;
   }
 
-  /* Focus ring — accessibility */
+  /* ── Focus ring — accessibility ── */
   :focus-visible {
     outline: 2px solid #10b981;
     outline-offset: 2px;
     border-radius: 8px;
+  }
+
+  /* ── Respect user's reduced-motion preference ── */
+  @media (prefers-reduced-motion: reduce) {
+
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
   }
 }
 
@@ -306,5 +348,17 @@ body {
 
   100% {
     background-position: 200% 0;
+  }
+}
+
+@keyframes gentle-bounce {
+
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+
+  50% {
+    transform: translateY(-6px);
   }
 }

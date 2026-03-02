@@ -118,11 +118,7 @@ export const useNotificationStore = create<NotificationState>()(
             },
 
             clearAll: () => {
-                const currentIds = get().notifications.map(n => n.id);
-                set((state) => ({
-                    notifications: [],
-                    dismissedIds: [...state.dismissedIds, ...currentIds]
-                }));
+                set({ notifications: [] });
             },
             getUnreadCount: () => get().notifications.filter(n => !n.read).length,
 

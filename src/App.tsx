@@ -45,6 +45,25 @@ function App() {
   useEffect(() => {
     seedDatabase();
 
+    // ── One-time migration: clear stale dismissedIds that blocked daily tips
+    // Previous clearAll() incorrectly added IDs to dismissedIds permanently.
+    const migrated = localStorage.getItem('notif-migrated-v2');
+    if (!migrated) {
+      try {
+        const stored = localStorage.getItem('cropguard-ai-notifications');
+        if (stored) {
+          const parsed = JSON.parse(stored);
+          if (parsed?.state?.dismissedIds?.length > 0) {
+            parsed.state.dismissedIds = [];
+            localStorage.setItem('cropguard-ai-notifications', JSON.stringify(parsed));
+            // Also reset in-memory store
+            useNotificationStore.setState({ dismissedIds: [] });
+          }
+        }
+      } catch (_) { /* ignore parse errors */ }
+      localStorage.setItem('notif-migrated-v2', '1');
+    }
+
     // Preload AI Models
     setTimeout(() => {
       import('./services/DiagnosisService').then(m => m.loadModel());

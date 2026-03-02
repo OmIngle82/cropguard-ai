@@ -141,14 +141,14 @@ export default function Layout() {
             </aside>
 
             {/* ── Main Content ─────────────────────────────────────────────────── */}
-            <main className="flex-1 md:ml-[18rem] overflow-y-auto pb-24 md:pb-6 h-screen">
-                <div className="max-w-7xl mx-auto w-full px-4 md:px-8 pt-6 animate-page-enter">
+            <main className="flex-1 md:ml-[18rem] overflow-y-auto pb-24 md:pb-6 h-screen overscroll-contain">
+                <div className="max-w-7xl mx-auto w-full px-3 md:px-8 pt-4 md:pt-6 animate-page-enter">
                     <Outlet />
                 </div>
             </main>
 
             {/* ── Mobile Bottom Nav ────────────────────────────────────────────── */}
-            <nav className="md:hidden fixed bottom-3 left-2 right-2 bg-gradient-to-br from-[#e0f2fe]/95 via-[#f0f9ff]/95 to-[#fecdd3]/30 backdrop-blur-2xl border-[2px] border-white shadow-[0_20px_50px_rgba(14,165,233,0.15)] rounded-[2rem] px-0.5 py-2 flex justify-between items-center z-50">
+            <nav className="md:hidden fixed bottom-3 left-2 right-2 bg-gradient-to-br from-[#e0f2fe]/95 via-[#f0f9ff]/95 to-[#fecdd3]/30 backdrop-blur-2xl border-[2px] border-white shadow-[0_20px_50px_rgba(14,165,233,0.15)] rounded-[2rem] px-0.5 py-2 flex justify-between items-center z-50 transform-gpu will-change-transform">
 
                 <NavItem to="/" icon={<Home size={20} />} label="Home" />
                 <NavItem to="/soil" icon={<FlaskConical size={20} />} label="Soil" />
@@ -183,7 +183,7 @@ export default function Layout() {
                            hover:shadow-[0_15px_40px_rgba(168,85,247,0.6)]
                            hover:-translate-y-1 active:scale-95 transition-all duration-300
                            flex items-center justify-center group overflow-hidden
-                           will-change-transform transform-gpu"
+                           will-change-transform transform-gpu animate-[gentle-bounce_4s_ease-in-out_infinite]"
             >
                 {/* Inner Glow */}
                 <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-transparent via-white/20 to-white/60 pointer-events-none animate-pulse" style={{ animationDuration: '3s' }} />
@@ -225,7 +225,7 @@ function NavItem({ to, icon, label }: { to: string, icon: React.ReactNode, label
         <NavLink
             to={to}
             className={({ isActive }) => clsx(
-                "flex flex-col items-center gap-0.5 px-1.5 py-1.5 rounded-xl transition-all duration-200 relative min-w-0 flex-1 max-w-[60px]",
+                "flex flex-col items-center gap-0.5 px-1.5 py-1.5 rounded-xl transition-all duration-200 relative min-w-0 flex-1 max-w-[60px] transform-gpu will-change-transform",
                 isActive ? "text-emerald-700" : "text-slate-500 hover:text-emerald-600"
             )}
         >

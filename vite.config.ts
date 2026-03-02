@@ -70,8 +70,15 @@ export default defineConfig({
       '/api/ceda': {
         target: 'https://api.ceda.ashoka.edu.in',
         changeOrigin: true,
-        secure: false, // Fix for ECONNRESET / SSL issues
+        secure: false,
         rewrite: (path) => path.replace(/^\/api\/ceda/, '')
+      },
+      // Forward /api/news to Vercel production during local dev
+      // (Vercel serverless functions don't run with npm run dev)
+      '/api/news': {
+        target: 'https://cropguard-ai-official.vercel.app',
+        changeOrigin: true,
+        secure: true,
       }
     }
   }

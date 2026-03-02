@@ -819,10 +819,10 @@ export default function SoilAnalyzer() {
                 rightSlot={(pageState === 'upload' || pageState === 'results' || pageState === 'history') && (
                     <button
                         onClick={() => setPageState(pageState === 'history' ? 'upload' : 'history')}
-                        className="bg-primary-50 hover:bg-primary-100 px-4 py-2 rounded-xl text-primary-700 text-xs font-black transition-all flex items-center gap-2"
+                        className="bg-primary-50 hover:bg-primary-100 px-3 py-2 rounded-xl text-primary-700 text-xs font-black transition-all flex items-center gap-1.5"
                     >
                         {pageState === 'history' ? <Upload size={14} /> : <HistoryIcon size={14} />}
-                        {pageState === 'history' ? 'SCAN' : 'HISTORY'}
+                        <span className="hidden md:inline">{pageState === 'history' ? 'SCAN' : 'HISTORY'}</span>
                     </button>
                 )}
             />

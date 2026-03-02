@@ -317,20 +317,22 @@ export default function MarketWidget() {
                             {selectedCrop && selectedCrop.id !== featuredRate?.id && (
                                 <div className="bg-emerald-900/40 backdrop-blur-md border border-emerald-500/30 rounded-3xl p-6 relative overflow-hidden shadow-lg shadow-emerald-900/20">
                                     <div className="absolute top-[-50%] right-[-10%] w-64 h-64 bg-emerald-500/10 rounded-full blur-[40px] pointer-events-none" />
-                                    <div className="relative z-10 flex items-center justify-between mb-4">
-                                        <div className="flex items-center gap-4">
-                                            <span className="text-4xl drop-shadow-lg">{selectedCrop.emoji}</span>
-                                            <div>
-                                                <div className="flex items-center gap-2">
+                                    <div className="relative z-10 mb-4">
+                                        {/* Top row: emoji + name + badge */}
+                                        <div className="flex items-center gap-3 mb-3">
+                                            <span className="text-4xl drop-shadow-lg flex-shrink-0">{selectedCrop.emoji}</span>
+                                            <div className="min-w-0">
+                                                <div className="flex flex-wrap items-center gap-2">
                                                     <h4 className="text-white font-black text-xl leading-none tracking-tight">{selectedCrop.commodity}</h4>
-                                                    <span className="text-[10px] font-black uppercase tracking-widest text-emerald-400 bg-emerald-400/10 px-2 py-0.5 rounded-md border border-emerald-400/20 shadow-sm">Insight</span>
+                                                    <span className="text-[10px] font-black uppercase tracking-widest text-emerald-400 bg-emerald-400/10 px-2 py-0.5 rounded-md border border-emerald-400/20 shadow-sm flex-shrink-0">Insight</span>
                                                 </div>
-                                                <p className="text-emerald-100/60 text-[11px] font-bold mt-1.5">{selectedCrop.mandi}</p>
+                                                <p className="text-emerald-100/60 text-[11px] font-bold mt-1">{selectedCrop.mandi}</p>
                                             </div>
                                         </div>
-                                        <div className="text-right">
-                                            <p className="text-white font-black text-2xl leading-none tracking-tight drop-shadow-sm">₹{selectedCrop.price.toLocaleString('en-IN')}</p>
-                                            <p className="text-emerald-100/50 text-[10px] font-bold mt-1.5 uppercase tracking-wider">per quintal</p>
+                                        {/* Price row — always full width, never clipped */}
+                                        <div className="flex items-baseline gap-2">
+                                            <p className="text-white font-black text-3xl leading-none tracking-tight drop-shadow-sm">₹{selectedCrop.price.toLocaleString('en-IN')}</p>
+                                            <p className="text-emerald-100/50 text-[11px] font-bold uppercase tracking-wider">/ quintal</p>
                                         </div>
                                     </div>
                                     {selectedCrop.history && selectedCrop.history.length > 0 && (
