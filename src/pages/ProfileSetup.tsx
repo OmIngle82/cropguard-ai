@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useStore } from '../store/useStore';
 import { updateUserProfile, checkProfileComplete } from '../services/UserService';
 import { User, MapPin, GraduationCap, Building2, Sprout, ArrowRight, ArrowLeft, CheckCircle2, Lightbulb } from 'lucide-react';
+import { toast } from '../services/ToastService';
 
 export default function ProfileSetup() {
     const navigate = useNavigate();
@@ -93,7 +94,7 @@ export default function ProfileSetup() {
             navigate('/');
         } catch (error) {
             console.error('Failed to complete profile:', error);
-            alert('Failed to save profile. Please try again.');
+            toast.error('Save failed', 'Failed to save profile. Please try again.');
         } finally {
             setLoading(false);
         }

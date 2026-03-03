@@ -7,6 +7,7 @@ import { signInWithPopup, RecaptchaVerifier, signInWithPhoneNumber, type Confirm
 import { Sprout, User, CheckCircle2, ShieldAlert, Cloud, WifiOff, ArrowRight } from 'lucide-react';
 import { useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { toast } from '../services/ToastService';
 
 export default function Login() {
     const navigate = useNavigate();
@@ -46,7 +47,7 @@ export default function Login() {
 
     const handleSendOTP = async () => {
         if (!auth) {
-            alert("Auth not configured");
+            toast.error('Auth not configured', 'Firebase authentication is not set up.');
             return;
         }
         if (phoneNumber.length < 10) {

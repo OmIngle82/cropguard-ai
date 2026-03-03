@@ -12,6 +12,7 @@ import { DISEASE_DB, type DiseaseInfo, type TreatmentOption } from '../services/
 import { useVoice } from '../hooks/useVoice';
 import { saveDiagnosis, saveCorrection, getHistory } from '../services/db';
 import { useStore } from '../store/useStore';
+import { toast } from '../services/ToastService';
 import { createConsultationRequest } from '../services/ExpertConsultationService';
 import { generateDiagnosisReport } from '../utils/reportGenerator';
 import clsx from 'clsx';
@@ -174,7 +175,7 @@ export default function Diagnosis() {
 
         } catch (error) {
             console.error('Diagnosis failed', error);
-            alert('Failed to analyze image. Please try again.');
+            toast.error('Analysis failed', 'Failed to analyze image. Please try again.');
             setStep('input');
         }
     };
@@ -628,7 +629,10 @@ export default function Diagnosis() {
                 if (new Date().getTime() - latestLog.date.getTime() < 60000) {
                     if (latestLog.id) {
                         await saveCorrection(latestLog.id, actualDisease);
-                        alert(lang === 'mr' ? 'धन्यवाद! तुमची प्रतिक्रिया नोंदवली गेली आहे.' : 'Thank you! Your feedback has been recorded.');
+                        toast.success(
+                            lang === 'mr' ? 'प्रतिक्रिया नोंदवली!' : 'Feedback recorded!',
+                            lang === 'mr' ? 'धन्यवाद! तुमची प्रतिक्रिया नोंदवली गेली आहे.' : 'Thank you! Your feedback has been recorded.'
+                        );
                         setShowDiseaseSelector(false);
                     }
                 }

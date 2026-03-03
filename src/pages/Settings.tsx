@@ -10,6 +10,8 @@ import PageHeader from '../components/PageHeader';
 import { useT } from '../i18n/useT';
 import clsx from 'clsx';
 import { useNavigate } from 'react-router-dom';
+import { toast } from '../services/ToastService';
+import { confirmPrompt } from '../services/ConfirmService';
 
 export default function Settings() {
     const { user, updateUser, logout, isGuest } = useStore();
@@ -56,10 +58,10 @@ export default function Settings() {
                 await updateUserProfile(user.id, formData);
             }
             updateUser(formData);
-            alert('Profile saved successfully!');
+            toast.success('Profile saved!', 'Your changes have been saved successfully.');
         } catch (error) {
             console.error('Failed to save profile:', error);
-            alert('Failed to save profile. Please try again.');
+            toast.error('Save failed', 'Unable to save profile. Please try again.');
         } finally {
             setIsSaving(false);
         }
@@ -517,9 +519,13 @@ export default function Settings() {
                                     try {
                                         const { syncService } = await import('../services/SyncService');
                                         const count = await syncService.syncPendingLogs();
-                                        alert(count > 0 ? `Synced ${count} logs to cloud!` : 'All data is already synced.');
+                                        if (count > 0) {
+                                            toast.success('Sync complete!', `Synced ${count} logs to cloud.`);
+                                        } else {
+                                            toast.info('Already synced', 'All data is already up to date.');
+                                        }
                                     } catch (e) {
-                                        alert('Sync failed. Check console.');
+                                        toast.error('Sync failed', 'Check your connection and try again.');
                                     } finally {
                                         setIsSaving(false);
                                     }
@@ -571,13 +577,20 @@ export default function Settings() {
                                 className="hidden"
                                 onChange={async (e) => {
                                     if (e.target.files?.[0]) {
-                                        if (confirm('Importing will add data to your current history. Continue?')) {
+                                        const proceed = await confirmPrompt({
+                                            title: 'Import Data',
+                                            message: 'Importing will merge history with your current data. Do you want to continue?',
+                                            confirmText: 'Import Data',
+                                            isDestructive: false
+                                        });
+
+                                        if (proceed) {
                                             try {
                                                 const { syncService } = await import('../services/SyncService');
                                                 const count = await syncService.importData(e.target.files[0]);
-                                                alert(`Successfully restored ${count} diagnoses!`);
+                                                toast.success('Data restored!', `Successfully restored ${count} diagnoses.`);
                                             } catch (err) {
-                                                alert('Failed to restore data. Invalid file.');
+                                                toast.error('Import failed', 'Invalid file format. Please check and retry.');
                                                 console.error(err);
                                             }
                                         }

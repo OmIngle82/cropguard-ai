@@ -6,6 +6,8 @@ import { seedDatabase } from './services/db';
 import { getUserProfile, createUserProfile } from './services/UserService';
 import { useStore } from './store/useStore';
 import { useNotificationStore } from './services/NotificationService';
+import ToastRenderer from './components/ToastRenderer';
+import ConfirmRenderer from './components/ConfirmRenderer';
 import { auth } from './lib/firebase';
 import { onAuthStateChanged } from 'firebase/auth';
 
@@ -122,31 +124,35 @@ function App() {
   }, []);
 
   return (
-    <Suspense fallback={<PageLoader />}>
-      <Routes>
-        <Route path="/login" element={<Login />} />
-        <Route path="/profile-setup" element={<ProfileSetup />} />
+    <>
+      <ToastRenderer />
+      <ConfirmRenderer />
+      <Suspense fallback={<PageLoader />}>
+        <Routes>
+          <Route path="/login" element={<Login />} />
+          <Route path="/profile-setup" element={<ProfileSetup />} />
 
-        {/* Protected Routes */}
-        <Route element={<ProtectedRoute />}>
-          <Route path="/" element={<Layout />}>
-            <Route index element={<Home />} />
-            <Route path="diagnosis" element={<Diagnosis />} />
-            <Route path="history" element={<History />} />
-            <Route path="schemes" element={<Schemes />} />
-            <Route path="consultations" element={<ExpertConsultation />} />
-            <Route path="experts" element={<Experts />} />
-            <Route path="premium" element={<Premium />} />
-            <Route path="soil" element={<SoilAnalyzer />} />
-            <Route path="experimental" element={<Experimental />} />
-            <Route path="settings" element={<Settings />} />
+          {/* Protected Routes */}
+          <Route element={<ProtectedRoute />}>
+            <Route path="/" element={<Layout />}>
+              <Route index element={<Home />} />
+              <Route path="diagnosis" element={<Diagnosis />} />
+              <Route path="history" element={<History />} />
+              <Route path="schemes" element={<Schemes />} />
+              <Route path="consultations" element={<ExpertConsultation />} />
+              <Route path="experts" element={<Experts />} />
+              <Route path="premium" element={<Premium />} />
+              <Route path="soil" element={<SoilAnalyzer />} />
+              <Route path="experimental" element={<Experimental />} />
+              <Route path="settings" element={<Settings />} />
+            </Route>
+
+            {/* Admin Route (No Layout) */}
+            <Route path="/admin" element={<AdminDashboard />} />
           </Route>
-
-          {/* Admin Route (No Layout) */}
-          <Route path="/admin" element={<AdminDashboard />} />
-        </Route>
-      </Routes>
-    </Suspense>
+        </Routes>
+      </Suspense>
+    </>
   );
 }
 
