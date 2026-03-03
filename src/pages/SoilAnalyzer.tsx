@@ -1,8 +1,8 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
 import { Upload, FileText, ImageIcon, RefreshCw, Sparkles, AlertCircle, CheckCircle2, ChevronDown, ChevronUp, FlaskConical, Leaf, Droplets, ChevronRight, History as HistoryIcon } from 'lucide-react';
 import clsx from 'clsx';
-import { analyzeSoilCard, saveSoilReport, type SoilReport, type NutrientStatus } from '../services/SoilService';
-import { getHistory, saveCorrection } from '../services/db';
+import { getSoilHistory, analyzeSoilCard, saveSoilReport, type SoilReport, type NutrientStatus } from '../services/SoilService';
+
 import PageHeader from '../components/PageHeader';
 import { useStore } from '../store/useStore';
 import jsPDF from 'jspdf';
@@ -613,7 +613,7 @@ function HistoryView({
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        getSoilHistory(userId).then(data => {
+        getSoilHistory(userId).then((data: SoilReport[]) => {
             setHistory(data);
             setLoading(false);
         });

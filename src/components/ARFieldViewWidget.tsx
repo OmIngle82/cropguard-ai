@@ -1,6 +1,6 @@
 ﻿import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence, useAnimationControls } from 'framer-motion';
-import { Scan, X, Camera, RefreshCw, Crosshair, Sparkles, Zap } from 'lucide-react';
+import { Scan, X, Camera, RefreshCw, Sparkles, Zap } from 'lucide-react';
 import { useT } from '../i18n/useT';
 import clsx from 'clsx';
 import { createPortal } from 'react-dom';

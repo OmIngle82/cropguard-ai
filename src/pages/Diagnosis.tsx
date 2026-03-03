@@ -541,7 +541,7 @@ export default function Diagnosis() {
                 });
 
                 // Gamification: Award points for completing a scan
-                await awardPoints(user.id, 50, 'crop_diagnosis');
+                await awardPoints(user?.id ?? 'guest', 50, 'crop_diagnosis');
 
                 setIsSaved(true);
             };
