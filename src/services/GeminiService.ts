@@ -1,5 +1,6 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { checkSchemeEligibility } from './SchemeService';
+import { useStore } from '../store/useStore';
 
 const API_KEY_STORAGE_KEY = 'gemini_api_key';
 
@@ -150,9 +151,12 @@ export async function createKisanChatSession(context?: {
     if (!apiKey) throw new Error("API Key Missing");
 
     const genAI = new GoogleGenerativeAI(apiKey);
+    const userLang = useStore.getState().user?.language || 'en';
+    const langName = userLang === 'mr' ? 'Marathi' : (userLang === 'hi' ? 'Hindi' : 'English');
 
     let systemInstruction = `You are "Kisan Mitra" (Farmer's Friend), a highly expert AI Agronomist assisting an Indian farmer specially from Maharashtra.
-You must be extremely polite, practical, and provide accurate agricultural advice. Respond in the language the user asks you in. 
+You must be extremely polite, practical, and provide accurate agricultural advice. 
+CRUCIAL: You MUST respond entirely in ${langName}. Do NOT use English unless the user specifically asks for it.
 
 CRITICAL DIRECTIVE:
 1. Provide deep, comprehensive, and COMPLETE technical information for ALL farming queries. 
@@ -276,4 +280,154 @@ If they ask about treatment, refer to the treatments recommended on their screen
             throw lastError || new Error("All Gemini models failed for KisanChat.");
         }
     };
+}
+
+export interface YieldPrediction {
+    originalYield: number; // For fallback/comparison UI
+    estYield: number; // e.g. 18.5
+    estRevenue: number; // e.g. 140000
+    accuracy: number; // e.g. 92
+    primaryFactor: string;
+}
+
+// ── Session-level cache (30-minute TTL) ─────────────────────────────
+const _yieldCache = new Map<string, { data: YieldPrediction; expiresAt: number }>();
+const YIELD_CACHE_TTL = 30 * 60 * 1000; // 30 min
+
+// ── Per-model 429 back-off tracking ─────────────────────────────────
+const _modelCooldown = new Map<string, number>(); // model -> unixMs when ok to retry
+
+// ── In-flight promise deduplication (prevents React 18 double-mount double-call)
+const _inFlight = new Map<string, Promise<YieldPrediction>>();
+
+// ── Daily quota exhaustion flag (resets at midnight)
+let _quotaExhaustedUntil = 0;
+
+export async function predictCropYield(crop: string, acres: string, locationName: string, weatherData: any): Promise<YieldPrediction> {
+    const apiKey = getApiKey();
+    if (!apiKey) throw new Error("API Key Missing");
+
+    // ── Daily quota check ───────────────────────────────────────────
+    if (Date.now() < _quotaExhaustedUntil) {
+        throw new Error('QUOTA_EXHAUSTED');
+    }
+
+    // ── Cache check ─────────────────────────────────────────────────
+    const cacheKey = `${crop}|${acres}|${locationName}`;
+    const cached = _yieldCache.get(cacheKey);
+    if (cached && Date.now() < cached.expiresAt) {
+        console.log('✅ Yield Prediction served from session cache.');
+        return cached.data;
+    }
+
+    // ── In-flight deduplication ───────────────────────────────────────
+    const existing = _inFlight.get(cacheKey);
+    if (existing) {
+        console.log('⏳ Yield request already in-flight, awaiting shared promise.');
+        return existing;
+    }
+
+    const genAI = new GoogleGenerativeAI(apiKey);
+
+    // Build the context (inside the actual fetch, wrapped in the in-flight promise)
+    const doFetch = async (): Promise<YieldPrediction> => {
+        let context = `Context for the prediction:
+    - Crop: ${crop}
+    - Farm Size: ${acres} Acres
+    - Location: ${locationName}`;
+
+        if (weatherData) {
+            context += `\n    - Current Weather Temp: ${weatherData.temp}°C, Humidity: ${weatherData.humidity}%\n    - Weather Condition: ${weatherData.condition}`;
+        }
+
+        const prompt = `
+    You are an expert Agricultural Economist and Agronomist for India.
+    I need you to predict the crop yield and estimated revenue for a farmer based on the following context.
+    
+    ${context}
+
+    Calculate realistic figures based on current average Indian market prices (Mandi rates) and typical yields for the specified crop in the given region (or general India if region is unknown).
+    
+    OUTPUT STRICTLY IN JSON FORMAT matching this interface, with NO markdown formatting:
+    {
+        "estYield": number (Total expected yield in Quintals for the ENTIRE farm size),
+        "estRevenue": number (Total expected revenue in INR ₹ based on current market prices),
+        "accuracy": number (Your confidence score from 0-100, usually 75-95),
+        "primaryFactor": string (Short 3-4 word phrase explaining the biggest positive/negative factor, e.g. "Optimal monsoon levels" or "Heat stress risk")
+    }
+    `;
+
+        const modelsToTry = [
+            "gemini-2.0-flash",
+            "gemini-2.5-flash",
+        ];
+
+        let lastError;
+        let allDailyExhausted = true;
+        for (const modelName of modelsToTry) {
+            // Skip models still in 429 cool-down period
+            const cooldownUntil = _modelCooldown.get(modelName) ?? 0;
+            if (Date.now() < cooldownUntil) {
+                const waitSec = Math.ceil((cooldownUntil - Date.now()) / 1000);
+                console.warn(`⏳ Model ${modelName} is in 429 cool-down for ${waitSec}s — skipping.`);
+                continue;
+            }
+            allDailyExhausted = false;
+
+            try {
+                console.log(`🤖 Predicting Yield with: ${modelName}...`);
+                const model = genAI.getGenerativeModel({ model: modelName });
+
+                const result = await model.generateContent(prompt);
+                const response = await result.response;
+                const text = response.text();
+
+                const jsonString = text.replace(/```json/g, '').replace(/```/g, '').trim();
+                const data = JSON.parse(jsonString);
+
+                console.log(`✅ Yield Prediction Success with ${modelName}!`, data);
+
+                const prediction: YieldPrediction = {
+                    originalYield: data.estYield * 0.88,
+                    estYield: data.estYield,
+                    estRevenue: data.estRevenue,
+                    accuracy: data.accuracy,
+                    primaryFactor: data.primaryFactor
+                };
+
+                // Store in session cache so re-renders don't call API again
+                _yieldCache.set(cacheKey, { data: prediction, expiresAt: Date.now() + YIELD_CACHE_TTL });
+                return prediction;
+
+            } catch (error: any) {
+                // Parse retry delay from 429 response and set cool-down
+                const retryMatch = error?.message?.match(/retry in (\d+(?:\.\d+)?)s/i);
+                const delaySec = retryMatch ? parseFloat(retryMatch[1]) : 60;
+                if (error?.message?.includes('429')) {
+                    _modelCooldown.set(modelName, Date.now() + delaySec * 1000);
+                    console.warn(`❌ Model ${modelName} 429 — cooling down for ${delaySec}s.`);
+                } else {
+                    allDailyExhausted = false;
+                    console.warn(`❌ Model ${modelName} failed yield prediction:`, error.message);
+                }
+                lastError = error;
+            }
+        }
+
+        // If all models hit a per-day quota limit, set exhaustion flag until midnight
+        if (allDailyExhausted) {
+            const now = new Date();
+            const midnight = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 0, 0, 0);
+            _quotaExhaustedUntil = midnight.getTime();
+            console.warn('🙅 Daily API quota exhausted for all models. Halting retries until midnight.');
+            throw new Error('QUOTA_EXHAUSTED');
+        }
+
+        throw lastError || new Error("Yield Prediction failed.");
+    }; // end doFetch
+
+    // Register the promise and clean up when done
+    const promise = doFetch().finally(() => _inFlight.delete(cacheKey));
+    _inFlight.set(cacheKey, promise);
+    return promise;
 }

@@ -3,8 +3,10 @@ import { checkSchemeEligibility } from '../services/SchemeService';
 import { ArrowRight, Landmark, ChevronRight, CheckCircle2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useMemo } from 'react';
+import { useT } from '../i18n/useT';
 
 export default function EligibleSchemes() {
+    const { t } = useT();
     const { user: profile } = useStore();
     const navigate = useNavigate();
 
@@ -30,13 +32,13 @@ export default function EligibleSchemes() {
                         <Landmark size={24} />
                     </div>
                     <div>
-                        <h3 className="text-slate-800 font-black text-xl tracking-tight drop-shadow-sm">Am I Eligible?</h3>
-                        <p className="text-[10px] font-bold text-orange-600 uppercase tracking-[0.15em] mt-1">Schemes for you</p>
+                        <h3 className="text-slate-800 font-black text-xl tracking-tight drop-shadow-sm">{t('schemes.amIEligible')}</h3>
+                        <p className="text-[10px] font-bold text-orange-600 uppercase tracking-[0.15em] mt-1">{t('schemes.forYou')}</p>
                     </div>
                 </div>
                 <div className="flex flex-col items-end">
                     <span className="text-3xl font-black text-slate-800 leading-none drop-shadow-sm">{matchingCount}</span>
-                    <span className="text-[9px] font-bold text-slate-500 uppercase tracking-widest mt-1">Matches</span>
+                    <span className="text-[9px] font-bold text-slate-500 uppercase tracking-widest mt-1">{t('schemes.matches')}</span>
                 </div>
             </div>
 
@@ -81,7 +83,7 @@ export default function EligibleSchemes() {
                 >
                     <div className="flex items-center gap-3">
                         <div className="text-left">
-                            <p className="text-sm font-black text-white tracking-tight uppercase">Explore Dashboard</p>
+                            <p className="text-sm font-black text-white tracking-tight uppercase">{t('schemes.exploreDashboard')}</p>
                         </div>
                     </div>
                     <div className="w-8 h-8 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center group-hover:bg-white/30 transition-colors shadow-sm">

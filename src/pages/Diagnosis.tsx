@@ -21,6 +21,7 @@ import { type GeminiDiagnosis, hasApiKey } from '../services/GeminiService';
 import TreatmentTimeline from '../components/TreatmentTimeline';
 import { type VerificationQuestion, generateConfirmationQuestions } from '../services/DiagnosisService';
 import { saveFeedback } from '../services/FeedbackService';
+import { awardPoints } from '../services/GamificationService';
 
 export default function Diagnosis() {
     // State Machine: 'input' -> 'analyzing' -> 'confirm_crop' -> 'visual_verification' -> 'symptom_check' -> 'result'
@@ -538,6 +539,10 @@ export default function Diagnosis() {
                     selectedTreatment: selectedTx?.name,
                     location: location
                 });
+
+                // Gamification: Award points for completing a scan
+                await awardPoints(user.id, 50, 'crop_diagnosis');
+
                 setIsSaved(true);
             };
             save();

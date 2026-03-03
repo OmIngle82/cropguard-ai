@@ -1,16 +1,18 @@
 import React, { useEffect } from 'react';
-import { Outlet, NavLink, useNavigate } from 'react-router-dom';
-import { Home, History, Settings, Sprout, Camera, Bot, FlaskConical, Bell, ChevronRight } from 'lucide-react';
+import { Outlet, NavLink, useNavigate, useLocation } from 'react-router-dom';
+import { Home, History, Settings, Sprout, Camera, Bot, FlaskConical, Bell, ChevronRight, Beaker } from 'lucide-react';
 import clsx from 'clsx';
 import { useStore } from '../store/useStore';
 import { useNotificationStore } from '../services/NotificationService';
 import { useT } from '../i18n/useT';
 import KisanChat from './KisanChat';
 import NotificationCenter from './NotificationCenter';
-import { AnimatePresence } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
+import PageTransition from './PageTransition';
 
 export default function Layout() {
     const navigate = useNavigate();
+    const location = useLocation();
     const { user: profile, refreshLocation, chatContext, setChatContext, refreshMarketData, marketData, uiState, setUiState } = useStore();
     const { getUnreadCount } = useNotificationStore();
 
@@ -36,6 +38,7 @@ export default function Layout() {
         { icon: FlaskConical, label: t('nav.soil'), path: '/soil' },
         { icon: Sprout, label: t('nav.experts'), path: '/experts' },
         { icon: History, label: t('nav.history'), path: '/history' },
+        { icon: Beaker, label: t('nav.experimental'), path: '/experimental' },
         { icon: Settings, label: t('nav.settings'), path: '/settings' },
     ];
 
@@ -77,21 +80,28 @@ export default function Layout() {
 
                 {/* Nav */}
                 <nav className="relative z-10 flex-1 px-4 py-4 mt-2 overflow-y-auto w-full">
-                    {/* The animated sliding background pill */}
-                    <div
-                        className="absolute left-4 right-4 h-[54px] bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-[1.5rem] shadow-xl shadow-emerald-500/20 transition-all duration-500 cubic-bezier(0.4, 0, 0.2, 1) pointer-events-none"
-                        style={{
-                            transform: `translateY(${navItems.findIndex(i => window.location.pathname === i.path || (i.path !== '/' && window.location.pathname.startsWith(i.path))) * (54 + 12)}px)`,
-                            opacity: navItems.some(i => window.location.pathname === i.path || (i.path !== '/' && window.location.pathname.startsWith(i.path))) ? 1 : 0
-                        }}
-                    >
-                        {/* Inner 3D detailing for the active pill */}
-                        <div className="absolute inset-0 rounded-[1.5rem] shadow-[inset_0_2px_10px_rgba(255,255,255,0.4)] bg-gradient-to-tr from-emerald-700/0 to-white/30" />
-                        <div className="absolute right-4 top-1/2 -translate-y-1/2 flex gap-1">
-                            <div className="w-1.5 h-1.5 rounded-full bg-white/40 shadow-sm" />
-                            <div className="w-1.5 h-1.5 rounded-full bg-white shadow-sm" />
-                        </div>
-                    </div>
+                    {/* The animated sliding background pill — uses layout for GPU-composited slide */}
+                    <AnimatePresence mode="wait" initial={false}>
+                        {navItems.map((item, index) => {
+                            const isActive = window.location.pathname === item.path || (item.path !== '/' && window.location.pathname.startsWith(item.path));
+                            if (!isActive) return null;
+                            return (
+                                <motion.div
+                                    key={item.path}
+                                    layoutId="nav-pill-desktop"
+                                    className="absolute left-4 right-4 h-[54px] bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-[1.5rem] shadow-xl shadow-emerald-500/20 pointer-events-none"
+                                    style={{ top: `${index * (54 + 12) + 16}px` }}
+                                    transition={{ type: 'spring', stiffness: 380, damping: 32 }}
+                                >
+                                    <div className="absolute inset-0 rounded-[1.5rem] shadow-[inset_0_2px_10px_rgba(255,255,255,0.4)] bg-gradient-to-tr from-emerald-700/0 to-white/30" />
+                                    <div className="absolute right-4 top-1/2 -translate-y-1/2 flex gap-1">
+                                        <div className="w-1.5 h-1.5 rounded-full bg-white/40 shadow-sm" />
+                                        <div className="w-1.5 h-1.5 rounded-full bg-white shadow-sm" />
+                                    </div>
+                                </motion.div>
+                            );
+                        })}
+                    </AnimatePresence>
 
                     {navItems.map((item, index) => {
                         const isActive = window.location.pathname === item.path || (item.path !== '/' && window.location.pathname.startsWith(item.path));
@@ -142,8 +152,12 @@ export default function Layout() {
 
             {/* ── Main Content ─────────────────────────────────────────────────── */}
             <main className="flex-1 md:ml-[18rem] overflow-y-auto pb-24 md:pb-6 h-screen overscroll-contain">
-                <div className="max-w-7xl mx-auto w-full px-3 md:px-8 pt-4 md:pt-6 animate-page-enter">
-                    <Outlet />
+                <div className="max-w-7xl mx-auto w-full px-3 md:px-8 pt-4 md:pt-6">
+                    <AnimatePresence mode="wait" initial={false}>
+                        <PageTransition key={location.pathname}>
+                            <Outlet />
+                        </PageTransition>
+                    </AnimatePresence>
                 </div>
             </main>
 
@@ -225,18 +239,23 @@ function NavItem({ to, icon, label }: { to: string, icon: React.ReactNode, label
         <NavLink
             to={to}
             className={({ isActive }) => clsx(
-                "flex flex-col items-center gap-0.5 px-1.5 py-1.5 rounded-xl transition-all duration-200 relative min-w-0 flex-1 max-w-[60px] transform-gpu will-change-transform",
+                "flex flex-col items-center gap-0.5 px-1.5 py-1.5 rounded-xl transition-colors duration-200 relative min-w-0 flex-1 max-w-[60px]",
                 isActive ? "text-emerald-700" : "text-slate-500 hover:text-emerald-600"
             )}
         >
             {({ isActive }) => (
                 <>
-                    <span className={clsx(
-                        "flex items-center justify-center w-8 h-8 rounded-xl transition-all duration-200",
-                        isActive ? "bg-white/40 shadow-[inset_0_1px_3px_rgba(255,255,255,0.4)]" : "bg-white/20 group-hover:bg-white"
-                    )}>
+                    <motion.span
+                        whileTap={{ scale: 0.78 }}
+                        whileHover={{ scale: 1.12 }}
+                        transition={{ type: 'spring', stiffness: 500, damping: 22 }}
+                        className={clsx(
+                            "flex items-center justify-center w-8 h-8 rounded-xl transition-colors duration-200",
+                            isActive ? "bg-white/40 shadow-[inset_0_1px_3px_rgba(255,255,255,0.4)]" : "bg-white/20"
+                        )}
+                    >
                         {icon}
-                    </span>
+                    </motion.span>
                     <span className={clsx(
                         "text-[8px] uppercase tracking-wide font-bold transition-colors truncate w-full text-center",
                         isActive ? "text-emerald-700" : "text-slate-500"

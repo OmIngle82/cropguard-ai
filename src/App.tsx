@@ -21,6 +21,7 @@ const ProfileSetup = lazy(() => import('./pages/ProfileSetup'));
 const ExpertConsultation = lazy(() => import('./pages/ExpertConsultation'));
 const Premium = lazy(() => import('./pages/Premium'));
 const SoilAnalyzer = lazy(() => import('./pages/SoilAnalyzer'));
+const Experimental = lazy(() => import('./pages/Experimental'));
 
 // Loading fallback component
 function PageLoader() {
@@ -137,6 +138,7 @@ function App() {
             <Route path="experts" element={<Experts />} />
             <Route path="premium" element={<Premium />} />
             <Route path="soil" element={<SoilAnalyzer />} />
+            <Route path="experimental" element={<Experimental />} />
             <Route path="settings" element={<Settings />} />
           </Route>
 

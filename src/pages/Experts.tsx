@@ -8,6 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import PageHeader, { HeaderAction } from '../components/PageHeader';
 import { motion } from 'framer-motion';
 import clsx from 'clsx';
+import { useT } from '../i18n/useT';
 
 // ── Booking modal states ───────────────────────────────────────────────────────
 type ModalState = 'form' | 'loading' | 'success' | 'error';
@@ -258,6 +259,7 @@ function ExpertCard({
 
 // ── Main Page ──────────────────────────────────────────────────────────────────
 export default function Experts() {
+    const { t } = useT();
     const [experts, setExperts] = useState<Expert[]>([]);
     const [loading, setLoading] = useState(true);
     const [selectedExpert, setSelectedExpert] = useState<Expert | null>(null);
@@ -278,8 +280,8 @@ export default function Experts() {
 
             <PageHeader
                 icon={<BadgeCheck size={20} />}
-                title="Expert Consultation"
-                subtitle="Connect with certified agronomists"
+                title={t('ph.experts')}
+                subtitle={t('ph.expertsSub')}
                 rightSlot={
                     <HeaderAction
                         icon={<Users size={13} />}
@@ -289,13 +291,15 @@ export default function Experts() {
                 }
             />
 
-            <div className="p-6 md:p-10 max-w-5xl mx-auto space-y-6">
-
+            <motion.div
+                initial="hidden"
+                animate="visible"
+                variants={{ hidden: {}, visible: { transition: { staggerChildren: 0.07, delayChildren: 0.05 } } }}
+                className="space-y-6"
+            >
                 {/* Hero card */}
                 <motion.div
-                    initial={{ opacity: 0, x: 24 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ type: "spring", damping: 25, stiffness: 200, delay: 0.1 }}
+                    variants={{ hidden: { opacity: 0, y: 16 }, visible: { opacity: 1, y: 0, transition: { duration: 0.4, ease: [0.16, 1, 0.3, 1] } } }}
                     className="relative bg-gradient-to-br from-slate-900 via-emerald-950 to-slate-900 border-[2px] border-white/10 rounded-3xl p-7 text-white overflow-hidden shadow-[0_20px_50px_rgba(16,185,129,0.15)] group"
                 >
                     <div className="absolute top-[-20%] left-[-10%] w-64 h-64 bg-emerald-500/20 rounded-full blur-[60px] pointer-events-none group-hover:bg-emerald-500/30 transition-colors duration-500" />
@@ -326,19 +330,27 @@ export default function Experts() {
                         <p className="text-gray-400 font-bold text-sm">Loading experts…</p>
                     </div>
                 ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                    <motion.div
+                        variants={{ hidden: {}, visible: { transition: { staggerChildren: 0.06 } } }}
+                        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5"
+                    >
                         {experts.map(expert => (
-                            <ExpertCard
+                            <motion.div
                                 key={expert.id}
-                                expert={expert}
-                                onBook={setSelectedExpert}
-                                onWhatsApp={handleWhatsApp}
-                                onCall={handleCall}
-                            />
+                                variants={{ hidden: { opacity: 0, y: 20, scale: 0.97 }, visible: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.4, ease: [0.16, 1, 0.3, 1] } } }}
+                            >
+                                <ExpertCard
+                                    expert={expert}
+                                    onBook={setSelectedExpert}
+                                    onWhatsApp={handleWhatsApp}
+                                    onCall={handleCall}
+                                />
+                            </motion.div>
                         ))}
-                    </div>
+                    </motion.div>
                 )}
-            </div>
+            </motion.div>
+
 
             {/* Booking modal */}
             {selectedExpert && (

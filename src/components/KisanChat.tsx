@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { User, Send, X, Sparkles, Leaf } from 'lucide-react';
+import { User, Send, X, Sparkles, Leaf, Mic, MicOff } from 'lucide-react';
 import { motion } from 'framer-motion';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
@@ -9,6 +9,12 @@ import 'katex/dist/katex.min.css';
 import clsx from 'clsx';
 import { useLocation } from 'react-router-dom';
 import { createKisanChatSession } from '../services/GeminiService';
+
+declare global {
+    interface Window {
+        webkitSpeechRecognition: any;
+    }
+}
 
 interface Message {
     id: string;
@@ -43,8 +49,67 @@ export default function KisanChat({ onClose, context, lang = 'en' }: KisanChatPr
     const [isTyping, setIsTyping] = useState(false);
     const [chatSession, setChatSession] = useState<any>(null);
     const [isStreaming, setIsStreaming] = useState(false);
+    const [isListening, setIsListening] = useState(false);
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const inputRef = useRef<HTMLInputElement>(null);
+    const recognitionRef = useRef<any>(null);
+
+    // Initialize Speech Recognition
+    useEffect(() => {
+        if ('webkitSpeechRecognition' in window) {
+            const SpeechRecognition = window.webkitSpeechRecognition;
+            const recognition = new SpeechRecognition();
+            recognition.continuous = false;
+            recognition.interimResults = true;
+            recognition.lang = lang === 'mr' ? 'mr-IN' : lang === 'hi' ? 'hi-IN' : 'en-US';
+
+            recognition.onresult = (event: any) => {
+                let interimTranscript = '';
+                let finalTranscript = '';
+
+                for (let i = event.resultIndex; i < event.results.length; ++i) {
+                    if (event.results[i].isFinal) {
+                        finalTranscript += event.results[i][0].transcript;
+                    } else {
+                        interimTranscript += event.results[i][0].transcript;
+                    }
+                }
+
+                if (finalTranscript) {
+                    setInput(prev => {
+                        const newText = prev + (prev.length > 0 ? ' ' : '') + finalTranscript;
+                        return newText;
+                    });
+                }
+            };
+
+            recognition.onerror = (event: any) => {
+                console.error("Speech recognition error", event.error);
+                setIsListening(false);
+            };
+
+            recognition.onend = () => {
+                setIsListening(false);
+            };
+
+            recognitionRef.current = recognition;
+        }
+    }, [lang]);
+
+    const toggleListening = () => {
+        if (isListening) {
+            recognitionRef.current?.stop();
+            setIsListening(false);
+        } else {
+            setInput(''); // optionally clear previous input
+            try {
+                recognitionRef.current?.start();
+                setIsListening(true);
+            } catch (e) {
+                console.error(e);
+            }
+        }
+    };
 
     const getWelcomeMessage = () => {
         const isDiagnosis = location.pathname.includes('/diagnosis');
@@ -410,12 +475,30 @@ export default function KisanChat({ onClose, context, lang = 'en' }: KisanChatPr
                                 }
                             }}
                             placeholder={
-                                lang === 'mr' ? "विचारण्यासाठी येथे टाइप करा..." :
-                                    lang === 'hi' ? "यहाँ टाइप करें..." :
-                                        "Ask about crop health, weather, prices..."
+                                isListening
+                                    ? (lang === 'mr' ? "ऐकत आहे..." : lang === 'hi' ? "सुन रहा हूँ..." : "Listening...")
+                                    : (lang === 'mr' ? "विचारण्यासाठी येथे टाइप करा..." :
+                                        lang === 'hi' ? "यहाँ टाइप करें..." :
+                                            "Ask about crop health, weather, prices...")
                             }
-                            className="flex-1 bg-transparent text-[15px] py-2.5 px-3 outline-none text-gray-800 font-medium placeholder:text-gray-400 min-w-0"
+                            className={clsx(
+                                "flex-1 bg-transparent text-[15px] py-2.5 px-3 outline-none font-medium placeholder:text-gray-400 min-w-0 transition-colors",
+                                isListening ? "text-emerald-600" : "text-gray-800"
+                            )}
                         />
+                        {/* Mic Button */}
+                        <button
+                            onClick={toggleListening}
+                            className={clsx(
+                                "w-11 h-11 rounded-xl flex items-center justify-center shrink-0 transition-all duration-300",
+                                isListening
+                                    ? "bg-red-50 text-red-500 shadow-inner border border-red-100 animate-pulse"
+                                    : "bg-emerald-50 text-emerald-600 hover:bg-emerald-100 border border-emerald-100"
+                            )}
+                        >
+                            {isListening ? <MicOff size={18} /> : <Mic size={18} />}
+                        </button>
+
                         <button
                             onClick={() => handleSend()}
                             disabled={!input.trim() || isStreaming}

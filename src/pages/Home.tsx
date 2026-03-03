@@ -10,8 +10,10 @@ import { runNotificationEngine } from '../services/NotificationEngine';
 import MarketWidget from '../components/MarketWidget';
 import { useT } from '../i18n/useT';
 import EligibleSchemes from '../components/EligibleSchemes';
+import PredictiveYieldWidget from '../components/PredictiveYieldWidget';
+import FarmScoreWidget from '../components/FarmScoreWidget';
 import { motion, AnimatePresence } from 'framer-motion';
-
+import { updateDailyStreak } from '../services/GamificationService';
 
 interface CropStat {
     name: 'Cotton' | 'Soybean';
@@ -152,7 +154,12 @@ export default function Home() {
             setLoadingStats(false);
         };
 
-        if (profile?.id) loadStats();
+        if (profile?.id) {
+            loadStats();
+            if (profile.id !== 'guest') {
+                updateDailyStreak(profile.id).catch(console.error);
+            }
+        }
         if (locationName) loadNews();
 
     }, [profile?.id, locationName, loadNews]);
@@ -166,8 +173,22 @@ export default function Home() {
 
     const { t } = useT();
 
+    const homeContainer = {
+        hidden: {},
+        visible: { transition: { staggerChildren: 0.09, delayChildren: 0.05 } },
+    };
+    const homeItem = {
+        hidden: { opacity: 0, y: 18, scale: 0.98 },
+        visible: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.42, ease: 'easeOut' } } as any,
+    };
+
     return (
-        <div className="px-3 pt-3 md:px-10 md:pt-6 space-y-5 pb-32 md:pb-10 max-w-7xl mx-auto">
+        <motion.div
+            variants={homeContainer}
+            initial="hidden"
+            animate="visible"
+            className="px-3 pt-3 md:px-10 md:pt-6 space-y-5 pb-32 md:pb-10 max-w-7xl mx-auto"
+        >
             {/* ── Home Sticky Header ── */}
             <header className="sticky md:static top-2 md:top-0 md:mt-8 z-40 -mx-3 md:mx-0 mb-5 transition-all duration-300 group">
                 <div className="relative md:max-w-[98%] mx-auto hover:-translate-y-0.5 transition-transform duration-300">
@@ -217,7 +238,9 @@ export default function Home() {
             </header>
 
             {/* Premium Banner */}
-            <div onClick={() => navigate('/premium')} className="relative overflow-hidden bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 rounded-2xl p-4 flex items-center justify-between cursor-pointer group mb-0">
+            <motion.div
+                variants={homeItem}
+                onClick={() => navigate('/premium')} className="relative overflow-hidden bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 rounded-2xl p-4 flex items-center justify-between cursor-pointer group mb-0">
                 <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-gradient-to-r from-yellow-900/20 to-transparent" />
                 <div className="flex items-center gap-3 relative">
                     <div className="w-9 h-9 bg-gradient-to-br from-yellow-400 to-amber-500 rounded-xl flex items-center justify-center shadow-lg shadow-yellow-500/40 group-hover:scale-110 transition-transform duration-300">
@@ -231,16 +254,18 @@ export default function Home() {
                 <div className="relative bg-white/10 hover:bg-white/20 p-2 rounded-xl transition-colors">
                     <ArrowRight className="text-white" size={15} />
                 </div>
-            </div>
+            </motion.div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            <motion.div variants={homeItem} className="grid grid-cols-1 lg:grid-cols-12 gap-8">
                 {/* Left Column (Weather + Stories) */}
                 <div className="lg:col-span-8 space-y-8">
                     {/* HACKATHON FEATURE: Predictive Alert */}
                     <PredictiveAlert weather={weather} forecast={forecast} />
 
                     {/* ── Weather / Smart Advisory Widget (Dynamic Theme) ── */}
-                    <section className="relative overflow-hidden rounded-[2.5rem] border-[2px] border-white/40 shadow-[0_25px_50px_rgba(0,0,0,0.12)] animate-fade-in-up group transition-all duration-500 hover:shadow-[0_30px_60px_rgba(0,0,0,0.18)] hover:-translate-y-1">
+                    <motion.section
+                        variants={homeItem}
+                        className="relative overflow-hidden rounded-[2.5rem] border-[2px] border-white/40 shadow-[0_25px_50px_rgba(0,0,0,0.12)] group transition-all duration-500 hover:shadow-[0_30px_60px_rgba(0,0,0,0.18)] hover:-translate-y-1">
                         {/* Dynamic Background */}
                         <div className={`absolute inset-0 pointer-events-none overflow-hidden bg-gradient-to-b ${currentTheme.gradient}`}>
                             {/* Sun (Daytime clear/cloudy) */}
@@ -345,7 +370,7 @@ export default function Home() {
                             </div>
 
                         </div>
-                    </section>
+                    </motion.section>
 
                     {/* Recent Stories / Updates */}
                     <section>
@@ -414,6 +439,12 @@ export default function Home() {
                             )}
                         </div>
                     </section>
+
+                    {/* Core Tools Section (Under News Feed) */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-8 animate-slide-in-up" style={{ animationDelay: '0.25s' }}>
+                        <FarmScoreWidget />
+                        <PredictiveYieldWidget />
+                    </div>
                 </div>
 
                 {/* Right Column (Insights + Market Widget) */}
@@ -487,12 +518,16 @@ export default function Home() {
                     </section>
 
                     {/* Am I Eligible Widget */}
-                    <EligibleSchemes />
+                    <div className="mt-6">
+                        <EligibleSchemes />
+                    </div>
 
                     {/* Mandi Market Rates Widget */}
-                    <MarketWidget />
+                    <div className="mt-6">
+                        <MarketWidget />
+                    </div>
                 </div>
-            </div>
+            </motion.div>
 
             {/* News Detail Modal - Rendered via Portal */}
             {createPortal(
@@ -592,8 +627,9 @@ export default function Home() {
                     )}
                 </AnimatePresence>,
                 document.body
-            )}
-        </div>
+            )
+            }
+        </motion.div>
     );
 }
 
@@ -607,6 +643,7 @@ function WeatherStat({ label, value, textClass = "text-gray-900", labelClass = "
 }
 
 function PredictiveAlert({ weather, forecast }: { weather: any, forecast: any[] }) {
+    const { t } = useT();
     if (!weather) return null;
 
     let alert = null;
@@ -615,8 +652,8 @@ function PredictiveAlert({ weather, forecast }: { weather: any, forecast: any[] 
 
     if (rainForecast) {
         alert = {
-            title: 'Spray Advisory: Rain Incoming',
-            message: `Rain expected in next 24h (${rainForecast.precipProb}% chance). Delay spraying.`,
+            title: t('alert.rainIn.title'),
+            message: t('alert.rainIn.msg').replace('{prob}', rainForecast.precipProb.toString()),
             gradient: 'from-blue-600 to-indigo-700',
             accent: 'bg-blue-400/20',
             icon: <CloudSun className="text-white" size={20} />
@@ -624,24 +661,24 @@ function PredictiveAlert({ weather, forecast }: { weather: any, forecast: any[] 
     }
     else if (weather.humidity > 80 && weather.temp > 24) {
         alert = {
-            title: 'High Fungal Risk Alert',
-            message: 'High humidity & warm temps favor Fungal Blight. Monitor crops closely.',
+            title: t('alert.fungal.title'),
+            message: t('alert.fungal.msg'),
             gradient: 'from-red-600 to-rose-700',
             accent: 'bg-red-400/20',
             icon: <AlertCircle className="text-white" size={20} />
         };
     } else if (weather.code !== undefined && weather.code < 700) {
         alert = {
-            title: 'Spray Advisory: Rain',
-            message: 'Rainfall or bad weather active. Avoid spraying pesticides.',
+            title: t('alert.rain.title'),
+            message: t('alert.rain.msg'),
             gradient: 'from-blue-500 to-cyan-600',
             accent: 'bg-blue-400/20',
             icon: <CloudSun className="text-white" size={20} />
         };
     } else if (weather.temp > 35) {
         alert = {
-            title: 'Heat Stress Warning',
-            message: 'Extreme heat detected. Ensure adequate irrigation for young crops.',
+            title: t('alert.heat.title'),
+            message: t('alert.heat.msg'),
             gradient: 'from-orange-500 to-amber-600',
             accent: 'bg-orange-400/20',
             icon: <Flame className="text-white" size={20} />

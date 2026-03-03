@@ -3,8 +3,10 @@ import { motion } from 'framer-motion';
 import type { Variants } from 'framer-motion';
 import PageHeader from '../components/PageHeader';
 import clsx from 'clsx';
+import { useT } from '../i18n/useT';
 
 export default function Premium() {
+    const { t } = useT();
     const containerVariants: Variants = {
         hidden: { opacity: 0 },
         visible: {
@@ -72,7 +74,8 @@ export default function Premium() {
     return (
         <div className="min-h-screen bg-surface pb-24 md:pb-12 font-sans overflow-x-hidden">
             <PageHeader
-                title="CropGuard AI"
+                title={t('ph.premium')}
+                subtitle={t('ph.premiumSub')}
                 badge="Pro"
                 showBack={false}
             />

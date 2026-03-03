@@ -1,11 +1,14 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
 import { Upload, FileText, ImageIcon, RefreshCw, Sparkles, AlertCircle, CheckCircle2, ChevronDown, ChevronUp, FlaskConical, Leaf, Droplets, ChevronRight, History as HistoryIcon } from 'lucide-react';
 import clsx from 'clsx';
-import { analyzeSoilCard, saveSoilReport, getSoilHistory, type SoilReport, type NutrientStatus } from '../services/SoilService';
+import { analyzeSoilCard, saveSoilReport, type SoilReport, type NutrientStatus } from '../services/SoilService';
+import { getHistory, saveCorrection } from '../services/db';
 import PageHeader from '../components/PageHeader';
 import { useStore } from '../store/useStore';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
+import { useT } from '../i18n/useT';
+import { awardPoints } from '../services/GamificationService';
 
 // ── Config ─────────────────────────────────────────────────────────────────────
 
@@ -772,6 +775,7 @@ function UploadView({ onFile, dragOver, setDragOver, fileInputRef, handleFileCha
 type PageState = 'upload' | 'analyzing' | 'results' | 'history' | 'error';
 
 export default function SoilAnalyzer() {
+    const { t } = useT();
     const fileInputRef = useRef<HTMLInputElement>(null);
     const [dragOver, setDragOver] = useState(false);
     const [errorMsg, setErrorMsg] = useState('');
@@ -793,6 +797,7 @@ export default function SoilAnalyzer() {
             setReport(result);
             if (profile?.id) {
                 await saveSoilReport(profile.id, result);
+                await awardPoints(profile.id, 100, 'soil_report'); // Gamification
             }
             setPageState('results');
         } catch (err: any) {
@@ -813,8 +818,8 @@ export default function SoilAnalyzer() {
         <div className="min-h-screen bg-surface">
             <PageHeader
                 icon={<FlaskConical size={20} />}
-                title="Soil Health Analyzer"
-                subtitle="Powered by Gemini AI Vision"
+                title={t('ph.soil')}
+                subtitle={t('ph.soilSub')}
                 showBack
                 rightSlot={(pageState === 'upload' || pageState === 'results' || pageState === 'history') && (
                     <button
@@ -822,7 +827,7 @@ export default function SoilAnalyzer() {
                         className="bg-primary-50 hover:bg-primary-100 px-3 py-2 rounded-xl text-primary-700 text-xs font-black transition-all flex items-center gap-1.5"
                     >
                         {pageState === 'history' ? <Upload size={14} /> : <HistoryIcon size={14} />}
-                        <span className="hidden md:inline">{pageState === 'history' ? 'SCAN' : 'HISTORY'}</span>
+                        <span className="hidden md:inline">{pageState === 'history' ? t('diag.scanAgain') : t('ph.history')}</span>
                     </button>
                 )}
             />

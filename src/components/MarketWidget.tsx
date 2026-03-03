@@ -5,6 +5,7 @@ import clsx from 'clsx';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useStore } from '../store/useStore';
 import type { MarketRate } from '../services/MarketService';
+import { useT } from '../i18n/useT';
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -223,6 +224,7 @@ function CompactCard({ rate, isSelected, onSelect }: { rate: MarketRate; isSelec
 // ── Main Widget ───────────────────────────────────────────────────────────────
 
 export default function MarketWidget() {
+    const { t } = useT();
     const { marketData, marketDataLoading, marketDataLastFetched, refreshMarketData } = useStore();
     const [expanded, setExpanded] = useState(false);
     const [selectedCropId, setSelectedCropId] = useState<string | null>(null);
@@ -258,14 +260,14 @@ export default function MarketWidget() {
                         <TrendingUp size={24} />
                     </div>
                     <div>
-                        <h3 className="text-white font-black text-xl tracking-tight drop-shadow-sm">Market Today</h3>
+                        <h3 className="text-white font-black text-xl tracking-tight drop-shadow-sm">{t('mkt.marketToday')}</h3>
                         <div className="flex items-center gap-2 mt-1">
                             <span className="relative flex h-2 w-2">
                                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
                                 <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-400" />
                             </span>
                             <span className="text-[10px] font-bold text-emerald-400 uppercase tracking-[0.15em]">
-                                Live Mandi · Vidarbha APMC
+                                {t('mkt.live')}
                             </span>
                         </div>
                     </div>
@@ -280,7 +282,7 @@ export default function MarketWidget() {
                         <RefreshCw size={16} className={clsx(marketDataLoading && 'animate-spin')} />
                     </button>
                     <p className="text-white/40 text-[9px] font-medium text-right mt-1">
-                        {lastUpdated ? `Updated ${lastUpdated}` : 'Fetching...'}
+                        {lastUpdated ? `${t('mkt.updated')} ${lastUpdated}` : t('mkt.fetching')}
                     </p>
                 </div>
             </div>
@@ -289,10 +291,10 @@ export default function MarketWidget() {
             {marketData.length > 0 && (
                 <div className="relative z-10 px-7 pb-4 grid grid-cols-4 gap-3">
                     {[
-                        { label: 'Tracked', value: marketData.length, color: 'text-white' },
-                        { label: 'Rising 📈', value: risingCount, color: 'text-emerald-400' },
-                        { label: 'Sell Now', value: sellNowCount, color: 'text-green-300' },
-                        { label: 'Holding', value: marketData.length - sellNowCount, color: 'text-amber-400' },
+                        { label: t('mkt.tracked'), value: marketData.length, color: 'text-white' },
+                        { label: t('mkt.rising'), value: risingCount, color: 'text-emerald-400' },
+                        { label: t('mkt.sellNow'), value: sellNowCount, color: 'text-green-300' },
+                        { label: t('mkt.holding'), value: marketData.length - sellNowCount, color: 'text-amber-400' },
                     ].map(s => (
                         <div key={s.label} className="bg-white/5 backdrop-blur-md rounded-2xl px-2.5 py-3 text-center border border-white/10 shadow-sm">
                             <p className={clsx("font-black text-xl leading-none drop-shadow-sm", s.color)}>{s.value}</p>

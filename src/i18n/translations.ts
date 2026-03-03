@@ -14,7 +14,7 @@ export type TranslationKey =
     // ── Navigation ──
     | 'nav.home' | 'nav.diagnose' | 'nav.soil' | 'nav.experts'
     | 'nav.history' | 'nav.settings' | 'nav.more'
-    | 'nav.aiAssistant'
+    | 'nav.aiAssistant' | 'nav.experimental' | 'experimental.title'
     // ── Common ──
     | 'common.loading' | 'common.error' | 'common.retry' | 'common.close'
     | 'common.back' | 'common.next' | 'common.submit' | 'common.cancel'
@@ -57,6 +57,7 @@ export type TranslationKey =
     | 'hist.title' | 'hist.subtitle' | 'hist.date' | 'hist.crop'
     | 'hist.disease' | 'hist.status' | 'hist.noRecords' | 'hist.noRecordsHint'
     | 'hist.deleteConfirm' | 'hist.deleteSuccess' | 'hist.filter.all'
+    | 'hist.deleteWarn'
     | 'hist.filter.high' | 'hist.filter.medium' | 'hist.filter.low'
     | 'hist.records'
     // ── Experts Page ──
@@ -81,10 +82,31 @@ export type TranslationKey =
     | 'mkt.today' | 'mkt.noData' | 'mkt.loading' | 'mkt.deepInsight'
     | 'mkt.close'
     // ── Notifications ──
-    | 'notif.title' | 'notif.empty' | 'notif.markAllRead'
-    // ── PageHeader subtitles ──
-    | 'ph.home' | 'ph.diagnose' | 'ph.soil' | 'ph.experts'
-    | 'ph.history' | 'ph.settings' | 'ph.schemes';
+    | 'notif.title' | 'notif.subtitle' | 'notif.empty' | 'notif.emptySub' | 'notif.markAllRead' | 'notif.clearAll'
+    // ── PageHeader subtitles & Settings sections ──
+    | 'ph.home' | 'ph.diagnose' | 'ph.soil' | 'ph.soilSub' | 'ph.experts' | 'ph.expertsSub'
+    | 'ph.history' | 'ph.settings' | 'ph.schemes' | 'ph.consultations' | 'ph.consultationsSub' | 'ph.premium' | 'ph.premiumSub'
+    | 'set.contactInfo' | 'set.educationProf' | 'set.businessInfo'
+    // ── Home Widgets ──
+    | 'schemes.amIEligible' | 'schemes.forYou' | 'schemes.matches' | 'schemes.exploreDashboard'
+    | 'mkt.marketToday' | 'mkt.live' | 'mkt.fetching' | 'mkt.updated' | 'mkt.tracked' | 'mkt.rising' | 'mkt.sellNow' | 'mkt.holding'
+    // ── IoT Dashboard ──
+    | 'iot.title' | 'iot.subtitle' | 'iot.moisture' | 'iot.nitrogen' | 'iot.phosphorus' | 'iot.potassium'
+    | 'iot.pumpStatus' | 'iot.pumpOn' | 'iot.pumpOff' | 'iot.autoMode' | 'iot.manualMode'
+    | 'iot.connection' | 'iot.connected' | 'iot.connecting' | 'iot.lastSync'
+    // ── Predictive Yield ──
+    | 'yield.title' | 'yield.subtitle' | 'yield.estYield' | 'yield.estRevenue'
+    | 'yield.accuracy' | 'yield.basedOn' | 'yield.weather' | 'yield.soil' | 'yield.market'
+    // ── Gamification ──
+    | 'gamify.streak' | 'gamify.days' | 'gamify.score' | 'gamify.levelTitle' | 'gamify.levelSubtitle'
+    | 'gamify.badge1' | 'gamify.badge2'
+    // ── AR Field View ──
+    | 'ar.title' | 'ar.subtitle' | 'ar.start' | 'ar.scanning' | 'ar.analyzing' | 'ar.health' | 'ar.diseaseDetected' | 'ar.healthy' | 'ar.stop'
+    // ── Predictive Alerts ──
+    | 'alert.rainIn.title' | 'alert.rainIn.msg'
+    | 'alert.fungal.title' | 'alert.fungal.msg'
+    | 'alert.rain.title' | 'alert.rain.msg'
+    | 'alert.heat.title' | 'alert.heat.msg';
 
 type Translations = Record<TranslationKey, string>;
 
@@ -98,6 +120,8 @@ const en: Translations = {
     'nav.settings': 'Settings',
     'nav.more': 'More',
     'nav.aiAssistant': 'AI Assistant',
+    'nav.experimental': 'Experimental Labs',
+    'experimental.title': 'Experimental Features',
 
     // Common
     'common.loading': 'Loading...',
@@ -220,9 +244,10 @@ const en: Translations = {
     'hist.disease': 'Disease',
     'hist.status': 'Status',
     'hist.noRecords': 'No records found',
-    'hist.noRecordsHint': 'Run a diagnosis to see your history here.',
-    'hist.deleteConfirm': 'Are you sure you want to delete this record?',
-    'hist.deleteSuccess': 'Record deleted successfully',
+    'hist.noRecordsHint': 'Scan a crop to see its history here.',
+    'hist.deleteConfirm': 'Delete Record?',
+    'hist.deleteWarn': 'This diagnosis record will be permanently removed.',
+    'hist.deleteSuccess': 'Record deleted successfully.',
     'hist.filter.all': 'All',
     'hist.filter.high': 'High',
     'hist.filter.medium': 'Medium',
@@ -287,17 +312,101 @@ const en: Translations = {
 
     // Notifications
     'notif.title': 'Notifications',
+    'notif.subtitle': 'Farm Alerts & Updates',
     'notif.empty': 'All caught up!',
-    'notif.markAllRead': 'Mark all as read',
+    'notif.emptySub': 'No new alerts for your farm at the moment.',
+    'notif.markAllRead': 'Mark all read',
+    'notif.clearAll': 'Clear all',
 
-    // PageHeader subtitles
+    // PageHeader subtitles & Settings sections
     'ph.home': 'Smart Farm Dashboard',
     'ph.diagnose': 'AI-Powered Disease Detection',
     'ph.soil': 'AI Soil Health Report',
+    'ph.soilSub': 'Powered by Gemini AI Vision',
     'ph.experts': 'Verified Agronomists',
+    'ph.expertsSub': 'Connect with certified agronomists',
     'ph.history': 'All Past Diagnoses',
     'ph.settings': 'Profile & Preferences',
     'ph.schemes': 'Govt. Schemes & Benefits',
+    'ph.consultations': 'My Consultations',
+    'ph.consultationsSub': 'Track your expert requests',
+    'ph.premium': 'Premium',
+    'ph.premiumSub': 'Upgrade to Pro features',
+    'set.contactInfo': 'Contact & Address',
+    'set.educationProf': 'Education & Professional',
+    'set.businessInfo': 'Business Information (Optional)',
+
+    // Home Widgets
+    'schemes.amIEligible': 'Am I Eligible?',
+    'schemes.forYou': 'Schemes for you',
+    'schemes.matches': 'Matches',
+    'schemes.exploreDashboard': 'Explore Dashboard',
+    'mkt.marketToday': 'Market Today',
+    'mkt.live': 'Live Mandi · Vidarbha APMC',
+    'mkt.fetching': 'Fetching...',
+    'mkt.updated': 'Updated',
+    'mkt.tracked': 'Tracked',
+    'mkt.rising': 'Rising 📈',
+    'mkt.sellNow': 'Sell Now',
+    'mkt.holding': 'Holding',
+
+    // IoT Dashboard
+    'iot.title': 'Smart Field Sensors',
+    'iot.subtitle': 'Live IoT telemetry',
+    'iot.moisture': 'Soil Moisture',
+    'iot.nitrogen': 'Nitrogen (N)',
+    'iot.phosphorus': 'Phosphorus (P)',
+    'iot.potassium': 'Potassium (K)',
+    'iot.pumpStatus': 'Irrigation Pump',
+    'iot.pumpOn': 'Running',
+    'iot.pumpOff': 'Standby',
+    'iot.autoMode': 'Auto-schedule Active',
+    'iot.manualMode': 'Manual Control',
+    'iot.connection': 'Node Status',
+    'iot.connected': 'Online',
+    'iot.connecting': 'Connecting...',
+    'iot.lastSync': 'Synced just now',
+
+    // Predictive Yield
+    'yield.title': 'AI Yield Prediction',
+    'yield.subtitle': 'Estimated harvest & revenue',
+    'yield.estYield': 'Est. Yield',
+    'yield.estRevenue': 'Est. Revenue',
+    'yield.accuracy': '94% Accuracy',
+    'yield.basedOn': 'Based on real-time factors:',
+    'yield.weather': 'Weather',
+    'yield.soil': 'Soil Health',
+    'yield.market': 'Market Data',
+
+    // Gamification
+    'gamify.streak': 'Streak',
+    'gamify.days': 'Days',
+    'gamify.score': 'Kisan Score',
+    'gamify.levelTitle': 'Master Farmer',
+    'gamify.levelSubtitle': 'Top 5% in your district! Keep it up 🌟',
+    'gamify.badge1': 'Soil Saver',
+    'gamify.badge2': 'Tech Guru',
+
+    // AR Field View
+    'ar.title': 'AR Field View',
+    'ar.subtitle': 'Live crop scanning simulation',
+    'ar.start': 'Launch AR View',
+    'ar.scanning': 'Scanning Environment...',
+    'ar.analyzing': 'Analyzing Crop Health...',
+    'ar.health': 'Vitality Score',
+    'ar.diseaseDetected': 'Mild Stress Detected',
+    'ar.healthy': 'Optimal Condition',
+    'ar.stop': 'Close AR',
+
+    // Predictive Alerts
+    'alert.rainIn.title': 'Spray Advisory: Rain Incoming',
+    'alert.rainIn.msg': 'Rain expected in next 24h ({prob}% chance). Delay spraying.',
+    'alert.fungal.title': 'High Fungal Risk Alert',
+    'alert.fungal.msg': 'High humidity & warm temps favor Fungal Blight. Monitor crops closely.',
+    'alert.rain.title': 'Spray Advisory: Rain',
+    'alert.rain.msg': 'Rainfall or bad weather active. Avoid spraying pesticides.',
+    'alert.heat.title': 'Heat Stress Warning',
+    'alert.heat.msg': 'Extreme heat detected. Ensure adequate irrigation for young crops.',
 };
 
 const mr: Translations = {
@@ -310,6 +419,8 @@ const mr: Translations = {
     'nav.settings': 'सेटिंग्ज',
     'nav.more': 'अधिक',
     'nav.aiAssistant': 'AI सहाय्यक',
+    'nav.experimental': 'प्रायोगिक लॅब्स',
+    'experimental.title': 'प्रायोगिक वैशिष्ट्ये',
 
     // Common
     'common.loading': 'लोड होत आहे...',
@@ -432,9 +543,10 @@ const mr: Translations = {
     'hist.disease': 'रोग',
     'hist.status': 'स्थिती',
     'hist.noRecords': 'कोणताही रेकॉर्ड आढळला नाही',
-    'hist.noRecordsHint': 'इतिहास पाहण्यासाठी निदान करा.',
-    'hist.deleteConfirm': 'हा रेकॉर्ड हटवायचा आहे का?',
-    'hist.deleteSuccess': 'रेकॉर्ड यशस्वीरित्या हटवला',
+    'hist.noRecordsHint': 'इतिहास पाहण्यासाठी पिक स्कॅन करा',
+    'hist.deleteConfirm': 'रेकॉर्ड हटवायचा?',
+    'hist.deleteWarn': 'हे निदान रेकॉर्ड कायमचे काढून टाकले जाईल.',
+    'hist.deleteSuccess': 'रेकॉर्ड यशस्वीपणे हटवला.',
     'hist.filter.all': 'सर्व',
     'hist.filter.high': 'जास्त',
     'hist.filter.medium': 'मध्यम',
@@ -499,17 +611,101 @@ const mr: Translations = {
 
     // Notifications
     'notif.title': 'सूचना',
+    'notif.subtitle': 'शेती विषयी सूचना आणि अपडेट्स',
     'notif.empty': 'सर्व वाचल्या गेल्या!',
+    'notif.emptySub': 'सध्या तुमच्या शेतासाठी कोणत्याही नवीन सूचना नाहीत.',
     'notif.markAllRead': 'सर्व वाचल्या म्हणून चिन्हांकित करा',
+    'notif.clearAll': 'सर्व साफ करा',
 
-    // PageHeader subtitles
+    // PageHeader subtitles & Settings sections
     'ph.home': 'स्मार्ट शेती डॅशबोर्ड',
     'ph.diagnose': 'AI-आधारित रोग ओळख',
     'ph.soil': 'AI माती आरोग्य अहवाल',
+    'ph.soilSub': 'Gemini AI Vision द्वारे समर्थित',
     'ph.experts': 'प्रमाणित कृषी सल्लागार',
+    'ph.expertsSub': 'प्रमाणित कृषी सल्लागारांशी संपर्क साधा',
     'ph.history': 'सर्व मागील निदान',
     'ph.settings': 'प्रोफाइल आणि प्राधान्ये',
     'ph.schemes': 'शासकीय योजना आणि लाभ',
+    'ph.consultations': 'माझ्या सल्लामसलती',
+    'ph.consultationsSub': 'तुमच्या विनंत्यांचा मागोवा घ्या',
+    'ph.premium': 'प्रीमियम',
+    'ph.premiumSub': 'प्रो वर अपग्रेड करा',
+    'set.contactInfo': 'संपर्क आणि पत्ता',
+    'set.educationProf': 'शिक्षण आणि व्यावसायिक',
+    'set.businessInfo': 'व्यवसाय माहिती (पर्यायी)',
+
+    // Home Widgets
+    'schemes.amIEligible': 'मी पात्र आहे का?',
+    'schemes.forYou': 'तुमच्यासाठी योजना',
+    'schemes.matches': 'जुळणाऱ्या',
+    'schemes.exploreDashboard': 'डॅशबोर्ड पहा',
+    'mkt.marketToday': 'आजचा बाजार',
+    'mkt.live': 'थेट बाजार · विदर्भ APMC',
+    'mkt.fetching': 'माहिती मिळवत आहे...',
+    'mkt.updated': 'अपडेट केले',
+    'mkt.tracked': 'ट्रॅक केलेले',
+    'mkt.rising': 'वाढत आहे 📈',
+    'mkt.sellNow': 'आता विका',
+    'mkt.holding': 'प्रतीक्षेत',
+
+    // IoT Dashboard
+    'iot.title': 'स्मार्ट शेत सेन्सर',
+    'iot.subtitle': 'थेट IoT माहिती',
+    'iot.moisture': 'मातीतील ओलावा',
+    'iot.nitrogen': 'नत्र (N)',
+    'iot.phosphorus': 'स्फुरद (P)',
+    'iot.potassium': 'पालाश (K)',
+    'iot.pumpStatus': 'सिंचन पंप',
+    'iot.pumpOn': 'चालू',
+    'iot.pumpOff': 'बंद',
+    'iot.autoMode': 'स्वयंचलित मोड',
+    'iot.manualMode': 'मॅन्युअल मोड',
+    'iot.connection': 'नोड स्थिती',
+    'iot.connected': 'ऑनलाइन',
+    'iot.connecting': 'जोडत आहे...',
+    'iot.lastSync': 'नवीनतम माहिती',
+
+    // Predictive Yield
+    'yield.title': 'AI पीक अंदाज',
+    'yield.subtitle': 'अंदाजित उत्पादन आणि उत्पन्न',
+    'yield.estYield': 'अंदाजित उत्पादन',
+    'yield.estRevenue': 'अंदाजित उत्पन्न',
+    'yield.accuracy': '९४% अचूकता',
+    'yield.basedOn': 'थेट घटकांवर आधारित:',
+    'yield.weather': 'हवामान',
+    'yield.soil': 'मातीचे आरोग्य',
+    'yield.market': 'बाजार माहिती',
+
+    // Gamification
+    'gamify.streak': 'सातत्य',
+    'gamify.days': 'दिवस',
+    'gamify.score': 'किसान स्कोअर',
+    'gamify.levelTitle': 'प्रगत शेतकरी',
+    'gamify.levelSubtitle': 'तुमच्या जिल्ह्यातील पहिल्या ५% मध्ये! 🌟',
+    'gamify.badge1': 'माती रक्षक',
+    'gamify.badge2': 'टेक गुरु',
+
+    // AR Field View
+    'ar.title': 'AR फील्ड व्ह्यू',
+    'ar.subtitle': 'थेट पीक स्कॅनिंग',
+    'ar.start': 'AR व्ह्यू सुरू करा',
+    'ar.scanning': 'परिसर स्कॅन होत आहे...',
+    'ar.analyzing': 'पिकांच्या आरोग्याचे विश्लेषण करत आहे...',
+    'ar.health': 'जीवनशक्ती',
+    'ar.diseaseDetected': 'सौम्य ताण ओळखला',
+    'ar.healthy': 'उत्तम स्थिती',
+    'ar.stop': 'AR बंद करा',
+
+    // Predictive Alerts
+    'alert.rainIn.title': 'फवारणी सल्ला: पाऊस येण्याची शक्यता',
+    'alert.rainIn.msg': 'पुढील २४ तासांत पावसाची शक्यता आहे ({prob}%). फवारणी पुढे ढकला.',
+    'alert.fungal.title': 'बुरशीजन्य रोगाचा उच्च धोका',
+    'alert.fungal.msg': 'जास्त आर्द्रता आणि उष्ण तापमान बुरशीजन्य रोगास अनुकूल आहे. पिकांवर बारकाईने लक्ष ठेवा.',
+    'alert.rain.title': 'फवारणी सल्ला: पाऊस',
+    'alert.rain.msg': 'पाऊस किंवा खराब हवामान सक्रिय आहे. कीटकनाशकांची फवारणी टाळा.',
+    'alert.heat.title': 'उष्णतेच्या तणावाचा इशारा',
+    'alert.heat.msg': 'अत्यंत उष्णता आढळली. कोवळ्या पिकांसाठी पुरेशा सिंचनाची खात्री करा.',
 };
 
 export const translations: Record<Locale, Translations> = { en, mr };

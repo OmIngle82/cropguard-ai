@@ -3,6 +3,7 @@ import { useNotificationStore, type Notification } from '../services/Notificatio
 import { motion } from 'framer-motion';
 import clsx from 'clsx';
 import { formatDistanceToNow } from 'date-fns';
+import { useT } from '../i18n/useT';
 
 interface NotificationCenterProps {
     onClose: () => void;
@@ -10,6 +11,7 @@ interface NotificationCenterProps {
 
 export default function NotificationCenter({ onClose }: NotificationCenterProps) {
     const { notifications, markAsRead, markAllAsRead, clearAll, dismissNotification } = useNotificationStore();
+    const { t } = useT();
 
 
 
@@ -43,8 +45,8 @@ export default function NotificationCenter({ onClose }: NotificationCenterProps)
                             <Bell size={22} className="drop-shadow-sm" />
                         </div>
                         <div>
-                            <h2 className="text-[22px] font-black text-slate-800 tracking-tight leading-none drop-shadow-sm">Notifications</h2>
-                            <p className="text-[11px] font-bold text-indigo-500 uppercase tracking-widest mt-1">Farm Alerts & Updates</p>
+                            <h2 className="text-[22px] font-black text-slate-800 tracking-tight leading-none drop-shadow-sm">{t('notif.title')}</h2>
+                            <p className="text-[11px] font-bold text-indigo-500 uppercase tracking-widest mt-1">{t('notif.subtitle')}</p>
                         </div>
                     </div>
                     <button
@@ -63,14 +65,14 @@ export default function NotificationCenter({ onClose }: NotificationCenterProps)
                             className="text-[11px] font-bold text-indigo-600 hover:text-indigo-700 uppercase tracking-wider flex items-center gap-1.5 transition-colors"
                         >
                             <Check size={14} />
-                            Mark all read
+                            {t('notif.markAllRead')}
                         </button>
                         <button
                             onClick={clearAll}
                             className="text-[11px] font-bold text-slate-400 hover:text-red-500 uppercase tracking-wider flex items-center gap-1.5 transition-colors"
                         >
                             <Trash2 size={14} />
-                            Clear all
+                            {t('notif.clearAll')}
                         </button>
                     </div>
                 )}
@@ -83,8 +85,8 @@ export default function NotificationCenter({ onClose }: NotificationCenterProps)
                                 <Bell size={40} className="text-slate-300 drop-shadow-sm" />
                             </div>
                             <div>
-                                <p className="text-[20px] font-black text-slate-700 drop-shadow-sm">All caught up!</p>
-                                <p className="text-[13px] font-bold text-slate-400 mt-1">No new alerts for your farm at the moment.</p>
+                                <p className="text-[20px] font-black text-slate-700 drop-shadow-sm">{t('notif.empty')}</p>
+                                <p className="text-[13px] font-bold text-slate-400 mt-1">{t('notif.emptySub')}</p>
                             </div>
                         </div>
                     ) : (

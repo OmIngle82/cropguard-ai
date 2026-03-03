@@ -43,6 +43,7 @@ function SkeletonCard() {
 
 // ── Delete Confirm Panel ───────────────────────────────────────────────────────
 function DeleteConfirm({ onConfirm, onCancel }: { onConfirm: () => void; onCancel: () => void }) {
+    const { t } = useT();
     return createPortal(
         <div className="fixed inset-0 z-[70] flex items-end md:items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
             <div className="bg-gradient-to-br from-emerald-50 via-teal-50/50 to-white backdrop-blur-2xl border-[2px] border-white rounded-[2rem] w-full max-w-sm p-7 shadow-[0_20px_50px_rgba(16,185,129,0.15)] relative overflow-hidden">
@@ -54,8 +55,8 @@ function DeleteConfirm({ onConfirm, onCancel }: { onConfirm: () => void; onCance
                         <Trash2 size={28} className="text-red-500" />
                     </div>
                     <div>
-                        <h3 className="font-black text-gray-900 text-xl leading-tight">Delete Record?</h3>
-                        <p className="text-gray-500 text-[14px] font-medium mt-1.5 leading-relaxed">This diagnosis record will be permanently removed.</p>
+                        <h3 className="font-black text-gray-900 text-xl leading-tight">{t('hist.deleteConfirm')}</h3>
+                        <p className="text-gray-500 text-[14px] font-medium mt-1.5 leading-relaxed">{t('hist.deleteWarn')}</p>
                     </div>
                 </div>
                 <div className="relative z-10 flex gap-3">
@@ -63,13 +64,13 @@ function DeleteConfirm({ onConfirm, onCancel }: { onConfirm: () => void; onCance
                         onClick={onCancel}
                         className="flex-1 py-3.5 rounded-2xl border border-gray-200 font-bold text-gray-600 hover:bg-gray-50 transition-colors"
                     >
-                        Cancel
+                        {t('common.cancel')}
                     </button>
                     <button
                         onClick={onConfirm}
                         className="flex-1 py-3.5 rounded-2xl bg-red-500 hover:bg-red-600 text-white font-bold transition-colors shadow-lg shadow-red-200"
                     >
-                        Delete
+                        {t('common.delete')}
                     </button>
                 </div>
             </div>

@@ -7,6 +7,7 @@ import {
 } from 'lucide-react';
 import clsx from 'clsx';
 import PageHeader, { HeaderAction } from '../components/PageHeader';
+import { useT } from '../i18n/useT';
 
 // ── Skeleton ───────────────────────────────────────────────────────────────────
 function SkeletonCard() {
@@ -53,6 +54,7 @@ const STATUS_CONFIG: Record<ConsultationRequest['status'], {
 
 // ── Main ───────────────────────────────────────────────────────────────────────
 export default function ExpertConsultation() {
+    const { t } = useT();
     const { user } = useStore();
     const navigate = useNavigate();
     const [consultations, setConsultations] = useState<ConsultationRequest[]>([]);
@@ -74,8 +76,8 @@ export default function ExpertConsultation() {
 
             <PageHeader
                 icon={<MessageSquare size={20} />}
-                title="My Consultations"
-                subtitle="Track your expert requests"
+                title={t('ph.consultations')}
+                subtitle={t('ph.consultationsSub')}
                 rightSlot={
                     <HeaderAction
                         icon={<ArrowRight size={13} />}

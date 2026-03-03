@@ -4,14 +4,16 @@ import { updateUserProfile, getProfileCompletionPercentage } from '../services/U
 import {
     User, Globe, Sprout, Save, Trash2, AlertTriangle, Database,
     Download, Upload, Cloud, CloudOff, RefreshCw, CheckCircle, LogOut,
-    MapPin, GraduationCap, Building2, ChevronDown, ChevronUp
+    MapPin, GraduationCap, Building2, ChevronDown, ChevronUp, Beaker, ArrowRight
 } from 'lucide-react';
 import PageHeader from '../components/PageHeader';
 import { useT } from '../i18n/useT';
 import clsx from 'clsx';
+import { useNavigate } from 'react-router-dom';
 
 export default function Settings() {
     const { user, updateUser, logout, isGuest } = useStore();
+    const navigate = useNavigate();
     const [isSaving, setIsSaving] = useState(false);
     const [expandedSection, setExpandedSection] = useState<string | null>('personal');
 
@@ -144,7 +146,7 @@ export default function Settings() {
 
                 {/* Personal Information */}
                 <CollapsibleSection
-                    title="Personal Information"
+                    title={t('set.personalInfo')}
                     icon={<User className="text-primary-600" />}
                     isExpanded={expandedSection === 'personal'}
                     onToggle={() => toggleSection('personal')}
@@ -220,7 +222,7 @@ export default function Settings() {
 
                 {/* Contact & Address */}
                 <CollapsibleSection
-                    title="Contact & Address"
+                    title={t('set.contactInfo')}
                     icon={<MapPin className="text-blue-600" />}
                     isExpanded={expandedSection === 'contact'}
                     onToggle={() => toggleSection('contact')}
@@ -280,7 +282,7 @@ export default function Settings() {
 
                 {/* Education */}
                 <CollapsibleSection
-                    title="Education & Professional"
+                    title={t('set.educationProf')}
                     icon={<GraduationCap className="text-purple-600" />}
                     isExpanded={expandedSection === 'education'}
                     onToggle={() => toggleSection('education')}
@@ -329,7 +331,7 @@ export default function Settings() {
 
                 {/* Farm Details */}
                 <CollapsibleSection
-                    title="Farm Details"
+                    title={t('set.farmDetails')}
                     icon={<Sprout className="text-green-600" />}
                     isExpanded={expandedSection === 'farm'}
                     onToggle={() => toggleSection('farm')}
@@ -368,7 +370,7 @@ export default function Settings() {
 
                 {/* Business Information */}
                 <CollapsibleSection
-                    title="Business Information (Optional)"
+                    title={t('set.businessInfo')}
                     icon={<Building2 className="text-orange-600" />}
                     isExpanded={expandedSection === 'business'}
                     onToggle={() => toggleSection('business')}
@@ -583,6 +585,35 @@ export default function Settings() {
                                 }}
                             />
                         </label>
+                    </div>
+                </section>
+
+                {/* ── Experimental Features (Mobile Access Route) ── */}
+                <section className="bg-gradient-to-br from-amber-500/10 via-orange-500/10 to-amber-500/10 rounded-[2rem] shadow-[0_8px_30px_rgba(245,158,11,0.05)] border-[2px] border-amber-400/20 overflow-hidden transition-all duration-300 hover:shadow-[0_15px_40px_rgba(245,158,11,0.15)] relative">
+                    <div className="absolute top-[-20%] right-[-10%] w-32 h-32 bg-amber-400/20 rounded-full blur-[30px] pointer-events-none" />
+
+                    <div className="px-6 py-5 flex items-center gap-4 border-b border-amber-400/10 bg-amber-50/40 backdrop-blur-sm relative z-10">
+                        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center shadow-lg shadow-amber-500/30">
+                            <Beaker size={18} className="text-white drop-shadow-sm" />
+                        </div>
+                        <div>
+                            <h2 className="text-[15px] font-black text-amber-950 tracking-tight">Experimental Labs</h2>
+                            <p className="text-[12px] text-amber-700 font-bold">Try beta hardware & IoT features</p>
+                        </div>
+                    </div>
+                    <div className="p-5 relative z-10">
+                        <button
+                            onClick={() => navigate('/experimental')}
+                            className="w-full flex items-center justify-between p-4 rounded-2xl bg-white/60 hover:bg-white backdrop-blur-sm border border-amber-200 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all active:scale-[0.98] group"
+                        >
+                            <div className="text-left">
+                                <p className="text-[14px] font-black text-amber-900 tracking-tight">Enter Labs</p>
+                                <p className="text-[11px] font-bold text-amber-600/70">AR Vision & Dashboard</p>
+                            </div>
+                            <div className="w-8 h-8 rounded-full bg-amber-50 flex items-center justify-center group-hover:bg-amber-100 transition-colors">
+                                <ArrowRight size={14} className="text-amber-500 group-hover:text-amber-600" />
+                            </div>
+                        </button>
                     </div>
                 </section>
 
